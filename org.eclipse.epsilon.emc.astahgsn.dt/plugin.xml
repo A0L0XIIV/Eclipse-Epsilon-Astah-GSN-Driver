@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.epsilon.common.dt.modelType">
+      <modelType
+            class="org.eclipse.epsilon.emc.astahgsn.GsnModel"
+            dialog="org.eclipse.epsilon.emc.astahgsn.dt.GsnModelConfigurationDialog"
+            icon="images/gsn_astah.gif"
+            label="Astah GSN XMI Document"
+            stable="true"
+            type="XMI">
+      </modelType>
+   </extension>
+
+</plugin>

@@ -1,0 +1,13 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: EMC Astah GSN development tools
+Bundle-SymbolicName: org.eclipse.epsilon.emc.astahgsn.dt;singleton:=true
+Bundle-Version: 1.2.0.qualifier
+Bundle-Activator: org.eclipse.epsilon.emc.astahgsn.dt.Activator
+Require-Bundle: org.eclipse.epsilon.common.dt,
+ org.eclipse.epsilon.emc.astahgsn;bundle-version="1.0.0"
+Bundle-ActivationPolicy: lazy
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Export-Package: org.eclipse.epsilon.emc.astahgsn.dt
+Bundle-Vendor: Eclipse.org
+Automatic-Module-Name: org.eclipse.epsilon.emc.astahgsn.dt
