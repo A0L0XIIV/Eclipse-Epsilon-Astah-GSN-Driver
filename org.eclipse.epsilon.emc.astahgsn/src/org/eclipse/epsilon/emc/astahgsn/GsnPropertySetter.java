@@ -3,7 +3,8 @@ package org.eclipse.epsilon.emc.astahgsn;
 import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
 import org.eclipse.epsilon.eol.execute.context.IEolContext;
 import org.eclipse.epsilon.eol.execute.introspection.java.JavaPropertySetter;
-import org.jsoup.nodes.Element;
+//import org.jsoup.nodes.Element;
+import org.w3c.dom.Element;
 
 public class GsnPropertySetter extends JavaPropertySetter {
 	

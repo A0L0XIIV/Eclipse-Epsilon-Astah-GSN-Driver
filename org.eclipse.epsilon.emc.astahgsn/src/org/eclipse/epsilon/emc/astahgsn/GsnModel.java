@@ -311,7 +311,7 @@ public class GsnModel extends CachedModel<Element> {
 	}
 
 	
-	/*@Override
+	@Override
 	public String getTypeNameOf(Object instance) {
 		if (instance instanceof Element) {
 			return "t_" + ((Element) instance).getTagName();
@@ -319,7 +319,7 @@ public class GsnModel extends CachedModel<Element> {
 		else {
 			return instance.getClass().getName();
 		}
-	}*/
+	}
 	
 	@Override
 	protected Object getCacheKeyForType(String type) throws EolModelElementTypeNotFoundException {
@@ -419,6 +419,9 @@ public class GsnModel extends CachedModel<Element> {
 			// Might be unnecessary and wrong!!!!!!!!!!!
 			if(e.getOwnerDocument() == document) {
 				return true;
+			}
+			else {
+				return false;
 			}
 		}
 		else {
