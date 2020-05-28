@@ -11,127 +11,64 @@ package org.eclipse.epsilon.emc.astahgsn;
 
 public class GsnProperty {
 	
-	protected GsnPropertyType type;
+	protected GsnPropertyType gsnPropertyType;
 	protected String property;
+	protected static boolean isAttribute = false;
 	
 	public static GsnProperty parse(String property) {
 		GsnProperty p = new GsnProperty();
 		
-		if (property.startsWith("G")) {
-			
-			p.type = GsnPropertyType.Goal;
-			
-		} else if (property.startsWith("S")) {
-			
-			p.type = GsnPropertyType.Stratagy;
-			
-		} else if (property.startsWith("Sn")) {
-			
-			p.type = GsnPropertyType.Solution;
-		
-		} else if (property.startsWith("C")) {
-			
-			p.type = GsnPropertyType.Context;
-			
-		} else if (property.startsWith("A")) {
-			
-			p.type = GsnPropertyType.Assumption;
-			
-		} else if (property.startsWith("J")) {
-			
-			p.type = GsnPropertyType.Justification;
-			
-		} else {
+		// Get elements by id
+		if(property.startsWith("i_")) {
+			//G1 turn into g, Sn13 turns into sn
+			switch(property.substring(2).replaceAll("([a-z])", "").toLowerCase()) {
+			case "g":
+				p.gsnPropertyType = GsnPropertyType.Goal;
+				break;
+			case "s":
+				p.gsnPropertyType = GsnPropertyType.Stratagy;
+				break;
+			case "sn":
+				p.gsnPropertyType = GsnPropertyType.Solution;
+				break;
+			case "c":
+				p.gsnPropertyType = GsnPropertyType.Context;
+				break;
+			case "a":
+				p.gsnPropertyType = GsnPropertyType.Assumption;
+				break;
+			case "j":
+				p.gsnPropertyType = GsnPropertyType.Justification;
+				break;
+			}
+			isAttribute = false;
+		}
+		// Get elements attribute
+		else if(property.startsWith("a_")) {
+			isAttribute = true;
+		}
+		else {
 			p = null;
 		}
 		
 		if (p!=null) {
-			p.property = property;//property.substring(2);
+			p.property = property.substring(2);
 		}
 		
 		return p;
 	}
 	
-	/*public Object cast(String value) {
-		value = value.trim();
-		
-		if (dataType == GsnPropertyDataType.BOOLEAN) {
-			return Boolean.parseBoolean(value);
-		}
-		else if (dataType == GsnPropertyDataType.INTEGER) {
-			try {
-				return Integer.parseInt(value);
-			}
-			catch (NumberFormatException ex) {
-				return 0;
-			}
-		}
-		else if (dataType == GsnPropertyDataType.FLOAT) {
-			try {
-				return Float.parseFloat(value);
-			}
-			catch (NumberFormatException ex) {
-				return 0.0f;
-			}
-		}
-		else if (dataType == GsnPropertyDataType.DOUBLE) {
-			try {
-				return Double.parseDouble(value);
-			}
-			catch (NumberFormatException ex) {
-				return 0.0d;
-			}
-		}
-		else {
-			return value;
-		}
-	
-	}
-	
-	private GsnPropertyDataType dataTypeFor(String letter) {
-		if (letter.equals("b")) {
-			return GsnPropertyDataType.BOOLEAN;
-		}
-		else if (letter.equals("f")) {
-			return GsnPropertyDataType.FLOAT;
-		}
-		else if (letter.equals("d")) {
-			return GsnPropertyDataType.DOUBLE;
-		}
-		else if (letter.equals("i")){
-			return GsnPropertyDataType.INTEGER;
-		}
-		else {
-			return GsnPropertyDataType.STRING;
-		}
-	}*/
 	
 	public String getProperty() {
 		return property;
 	}
 	
 	public GsnPropertyType getType() {
-		return type;
+		return gsnPropertyType;
 	}
 
-	/*public boolean isAttribute() {
-		return type == GsnPropertyType.Attribute;
+	public boolean isAttribute() {
+		return isAttribute;
 	}
-
-	public boolean isElement() {
-		return type == GsnPropertyType.Element;
-	}
-	
-	public boolean isText() {
-		return text;
-	}
-	
-	public boolean isMany() {
-		return many;
-	}
-
-	public boolean isReference() {
-		return type == GsnPropertyType.Reference;
-	}*/
 	
 }
