@@ -22,10 +22,10 @@ public class GsnType {
 	// Convert these to xsi:type format such as ARM:Claim
 	public static GsnType parse(String type) {
 		GsnType g = null;
-		g = new GsnType();
 		
 		// Nodes
 		if (type.startsWith("n_")) {
+			g = new GsnType();
 			switch(type.substring(2).toLowerCase()) {
 				case "goal":
 				case "assumption":
@@ -46,6 +46,7 @@ public class GsnType {
 		
 		// Links
 		else if (type.startsWith("l_")) {
+			g = new GsnType();
 			switch(type.substring(2).toLowerCase()) {
 				case "context":
 					g.gsnType = "ARM:AssertedContext";
@@ -59,6 +60,10 @@ public class GsnType {
 				default:
 					g.gsnType = null;
 			}
+		}
+		else if(type.startsWith("gsn")) {
+			g = new GsnType();
+			g.gsnType = "ARM:Argumentation";
 		}
 		return g;
 	}
