@@ -20,7 +20,11 @@ public class GsnPropertySetter extends JavaPropertySetter {
 		if (g != null /*&& p.isAttribute()*/) {
 			Element element = (Element) target;
 			//element.attr(g.getProperty(), String.valueOf(value));
-			element.getElementById(property).attr("content", String.valueOf(value));
+			//element.getElementById(property).attr("content", String.valueOf(value));
+			/*Element current = element.get  .getAttributeNode("id");
+			if(element.getAttributeNode("id") == property) {
+				
+			}*/
 			return;
 		}
 		super.invoke(target, property, value, context);
