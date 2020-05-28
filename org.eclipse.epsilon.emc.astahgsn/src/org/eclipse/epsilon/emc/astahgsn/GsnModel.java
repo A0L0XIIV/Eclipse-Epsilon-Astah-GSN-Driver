@@ -19,7 +19,6 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import org.eclipse.epsilon.common.util.StringProperties;
 import org.eclipse.epsilon.emc.plainxml.DomUtil;
-import org.eclipse.epsilon.emc.plainxml.PlainXmlType;
 import org.eclipse.epsilon.emc.plainxml.StringInputStream;
 import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
 import org.eclipse.epsilon.eol.exceptions.models.EolEnumerationValueNotFoundException;
@@ -57,10 +56,13 @@ public class GsnModel extends CachedModel<Element> {
 	}
 	
 	public synchronized Node getRoot() {
+		System.out.println("GSNModel - getRoot function");
 		return document.getFirstChild();
 	}
 	
 	public synchronized void setRoot(Node node) {
+		System.out.println("GSNModel - setRoot function");
+		
 		Node oldRoot = getRoot();
 		if (oldRoot != null) document.removeChild(oldRoot);
 		document.appendChild(node);
@@ -68,6 +70,8 @@ public class GsnModel extends CachedModel<Element> {
 	
 	@Override
 	protected synchronized Collection<Element> allContentsFromModel() {
+		System.out.println("GSNModel - allContentsFromModel function");
+		
 		Collection<Element> elements = new ArrayList<>();
 		collectAllElements(document, elements);
 		for (Element created : createdElements) {
@@ -79,14 +83,20 @@ public class GsnModel extends CachedModel<Element> {
 	}
 	
 	public String getUri() {
+		System.out.println("GSNModel - getUri function");
+		
 		return uri;
 	}
 
 	public void setUri(String uri) {
+		System.out.println("GSNModel - setUri function");
+		
 		this.uri = uri;
 	}
 	
 	public synchronized String getXml() {
+		System.out.println("GSNModel - getXml function");
+		
 		try {
 			StringWriter sw = new StringWriter();
 			Source xmlSource = new DOMSource(document);
@@ -111,28 +121,40 @@ public class GsnModel extends CachedModel<Element> {
 	}
 
 	public void setXml(String xml) {
+		System.out.println("GSNModel - setXml function");
+		
 		this.xml = xml;
 	}
 	
 	public File getFile() {
+		System.out.println("GSNModel - getFile function");
+		
 		return file;
 	}
 
 	public void setFile(File file) {
+		System.out.println("GSNModel - setFile function");
+		
 		this.file = file;
 	}
 
 	public Document getDocument() {
+		System.out.println("GSNModel - getDocument function");
+		
 		return document;
 	}
 
 	@Override
 	public boolean isLoaded() {
+		System.out.println("GSNModel - isLoaded function");
+		
 		return document != null;
 	}
 	
 	@Override
 	protected Element createInstanceInModel(String type) throws EolModelElementTypeNotFoundException, EolNotInstantiableModelElementTypeException {
+		System.out.println("GSNModel - createInstanceInModel function");
+		
 		//return createInstance(type, Collections.emptyList());
 		
 		//HTML MODEL USES
@@ -183,6 +205,8 @@ public class GsnModel extends CachedModel<Element> {
 	
 	@Override
 	protected synchronized boolean deleteElementInModel(Object instance) throws EolRuntimeException {
+		System.out.println("GSNModel - deleteElementInModel function");
+		
 		if (!(instance instanceof Element))
 			return false;
 		
@@ -201,6 +225,8 @@ public class GsnModel extends CachedModel<Element> {
 	}
 	
 	public synchronized void collectAllElements(Node root, Collection<Element> elements) {
+		System.out.println("GSNModel - collectAllElements function");
+		
 		if (root instanceof Element) {
 			elements.add((Element) root);
 		}
@@ -216,11 +242,15 @@ public class GsnModel extends CachedModel<Element> {
 	
 	@Override
 	protected Collection<Element> getAllOfKindFromModel(String type) throws EolModelElementTypeNotFoundException {
+		System.out.println("GSNModel - getAllOfKindFromModel function");
+		
 		return getAllOfType(type);
 	}
 
 	@Override
 	protected Collection<Element> getAllOfTypeFromModel(String type) throws EolModelElementTypeNotFoundException {
+		System.out.println("GSNModel - getAllOfTypeFromModel function");
+		
 		if (ELEMENT_TYPE.equals(type)) {
 			return allContents();
 		}
@@ -246,8 +276,14 @@ public class GsnModel extends CachedModel<Element> {
 	}
 	
 	public synchronized boolean nodeTypeMatches(Element element, String name) {
+		System.out.println("GSNModel - nodeTypeMatches function");
+		
 		// Compare elements' xsi:type attributes
 		if (element.getAttribute("xsi:type").equalsIgnoreCase(name)) {
+			return true;
+		}
+		// Get main XML tag, it contains all elements as children tags
+		else if(element.getTagName().equals(name)) {
 			return true;
 		}
 		else {
@@ -266,12 +302,16 @@ public class GsnModel extends CachedModel<Element> {
 	
 	@Override
 	protected void disposeModel() {
+		System.out.println("GSNModel - disposeModel function");
+		
 		document = null;
 		xml = null;
 	}
 
 	@Override
 	public Object getElementById(String id) {
+		System.out.println("GSNModel - getElementById function");
+		
 		for (Object o : allContents()) {
 			Element e = ((Element) o);
 			if (e.hasAttribute(idAttributeName) && e.getAttribute(idAttributeName).equals(id)) {
@@ -283,6 +323,8 @@ public class GsnModel extends CachedModel<Element> {
 	
 	@Override
 	public String getElementId(Object instance) {
+		System.out.println("GSNModel - getElementId function");
+		
 		if (instance instanceof Element) {
 			Element element = (Element) instance;
 			if (element.hasAttribute(idAttributeName)) {
@@ -294,25 +336,35 @@ public class GsnModel extends CachedModel<Element> {
 	
 	@Override
 	public void setElementId(Object instance, String newId) {
+		System.out.println("GSNModel - setElementId function");
+		
 		// do nothing
 	}
 
 	public void setIdAttributeName(String idAttributeName) {
+		System.out.println("GSNModel - setIdAttributeName function");
+		
 		this.idAttributeName = idAttributeName;
 	}
 	
 	public String getIdAttributeName() {
+		System.out.println("GSNModel - getIdAttributeName function");
+		
 		return idAttributeName;
 	}
 	
 	@Override
 	public Object getEnumerationValue(String enumeration, String label) throws EolEnumerationValueNotFoundException {
+		System.out.println("GSNModel - getEnumerationValue function");
+		
 		return null;
 	}
 
 	
 	@Override
 	public String getTypeNameOf(Object instance) {
+		System.out.println("GSNModel - getTypeNameOf function");
+		
 		if (instance instanceof Element) {
 			return "t_" + ((Element) instance).getTagName();
 		}
@@ -323,11 +375,15 @@ public class GsnModel extends CachedModel<Element> {
 	
 	@Override
 	protected Object getCacheKeyForType(String type) throws EolModelElementTypeNotFoundException {
+		System.out.println("GSNModel - getCacheKeyForType function");
+		
 		return type;
 	}
 
 	@Override
 	protected Collection<String> getAllTypeNamesOf(Object instance) {
+		System.out.println("GSNModel - getAllTypeNamesOf function");
+		
 		//return Collections.singleton(getTypeNameOf(instance));
 		// Types are fixed and cannot change
 		return new ArrayList<String>(Arrays.asList("n_goal", "n_strategy", "n_solution", "n_context", "n_assumption", "n_justification", "l_context", "l_inference", "l_evidence"));
@@ -336,29 +392,39 @@ public class GsnModel extends CachedModel<Element> {
 	
 	@Override
 	public Object getTypeOf(Object instance) {
+		System.out.println("GSNModel - getTypeOf function");
+		
 		return instance.getClass();
 	}
 
 	
 	@Override
 	public boolean hasType(String type) {
+		System.out.println("GSNModel - hasType function, type: " + type);
+		
 		return ELEMENT_TYPE.equals(type) || (GsnType.parse(type) != null);
 	}
 
 	
 	@Override
 	public boolean isInstantiable(String type) {
+		System.out.println("GSNModel - isInstantiable function");
+		
 		return hasType(type);
 	}
 
 	
 	@Override
 	public boolean isModelElement(Object instance) {
+		System.out.println("GSNModel - isModelElement function");
+		
 		return (instance instanceof Element);
 	}
 	
 	@Override
 	protected synchronized void loadModel() throws EolModelLoadingException {
+		System.out.println("GSNModel - loadModel function");
+		
 		try {
 			DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
 			DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
@@ -386,6 +452,8 @@ public class GsnModel extends CachedModel<Element> {
 	
 	@Override
 	public void load(StringProperties properties, IRelativePathResolver resolver) throws EolModelLoadingException {
+		System.out.println("GSNModel - load function");
+		
 		super.load(properties, resolver);
 		
 		String filePath = properties.getProperty(GsnModel.PROPERTY_FILE);
@@ -403,6 +471,8 @@ public class GsnModel extends CachedModel<Element> {
 	
 	@Override
 	public boolean owns(Object instance) {
+		System.out.println("GSNModel - owns function, instance: " + instance.toString());
+		
 		if (instance instanceof Element) synchronized (this) {
 			Element e = (Element) instance;
 			/*Node parent = e.getParentNode();
@@ -432,6 +502,8 @@ public class GsnModel extends CachedModel<Element> {
 	
 	@Override
 	public synchronized boolean store(String location) {
+		System.out.println("GSNModel - store-location function");
+		
 		try {
 			Source xmlSource = new DOMSource(document);
 			Result result = new StreamResult(new FileOutputStream(location));
@@ -441,7 +513,8 @@ public class GsnModel extends CachedModel<Element> {
 	
 			// create Transformer for transformation
 			Transformer transformer = transformerFactory.newTransformer();
-			transformer.setOutputProperty(OutputKeys.INDENT, "yes");	//Java XML Indent
+			// Causes newlines every time Epsilon run
+			//transformer.setOutputProperty(OutputKeys.INDENT, "yes");	//Java XML Indent
 			transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
 			
 			// transform and deliver content to client
@@ -457,6 +530,8 @@ public class GsnModel extends CachedModel<Element> {
 	
 	@Override
 	public boolean store() {
+		System.out.println("GSNModel - store function");
+		
 		if (file != null) {
 			return store(file.getAbsolutePath());
 		}
