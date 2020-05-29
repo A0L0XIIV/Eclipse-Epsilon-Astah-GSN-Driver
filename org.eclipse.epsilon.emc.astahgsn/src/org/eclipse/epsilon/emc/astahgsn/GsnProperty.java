@@ -12,8 +12,7 @@ package org.eclipse.epsilon.emc.astahgsn;
 public class GsnProperty {
 	
 	protected GsnPropertyType gsnPropertyType;
-	protected String property;
-	protected static boolean isAttribute = false;
+	protected String property;;
 	
 	public static GsnProperty parse(String property) {
 		GsnProperty p = new GsnProperty();
@@ -21,7 +20,7 @@ public class GsnProperty {
 		// Get elements by id
 		if(property.startsWith("i_")) {
 			//G1 turn into g, Sn13 turns into sn
-			switch(property.substring(2).replaceAll("([a-z])", "").toLowerCase()) {
+			switch(property.substring(2).replaceAll("([0-9])", "").toLowerCase()) {
 			case "g":
 				p.gsnPropertyType = GsnPropertyType.Goal;
 				break;
@@ -40,12 +39,10 @@ public class GsnProperty {
 			case "j":
 				p.gsnPropertyType = GsnPropertyType.Justification;
 				break;
+			default:
+				p = null;
+				break;
 			}
-			isAttribute = false;
-		}
-		// Get elements attribute
-		else if(property.startsWith("a_")) {
-			isAttribute = true;
 		}
 		else {
 			p = null;
@@ -65,10 +62,6 @@ public class GsnProperty {
 	
 	public GsnPropertyType getType() {
 		return gsnPropertyType;
-	}
-
-	public boolean isAttribute() {
-		return isAttribute;
 	}
 	
 }
