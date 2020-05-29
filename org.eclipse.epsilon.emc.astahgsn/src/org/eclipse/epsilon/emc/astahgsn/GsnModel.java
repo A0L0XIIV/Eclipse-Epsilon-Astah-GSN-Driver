@@ -50,6 +50,8 @@ public class GsnModel extends CachedModel<Element> {
 	public static final String PROPERTY_URI = "uri";
 	public static final String PROPERTY_TIMEOUT = "timeout";
 	
+	public static final String ROOT_TAG = "ARM:Argumentation";
+	
 	public GsnModel() {
 		propertyGetter = new GsnPropertyGetter(this);
 		propertySetter = new GsnPropertySetter(this);
@@ -161,47 +163,6 @@ public class GsnModel extends CachedModel<Element> {
 		//return document.createElement(PlainXmlType.parse(type).getTagName());
 		return document.createElement("argumentElement");
 	}
-	/*
-	@Override
-	public synchronized Element createInstance(String type, Collection<Object> parameters) throws EolModelElementTypeNotFoundException, EolNotInstantiableModelElementTypeException {
-		String tagName = null;
-		boolean root = false;
-		
-		if (ELEMENT_TYPE.equals(type)) {
-			if (parameters.size() == 1) {
-				tagName = parameters.iterator().next() + "";
-			}
-			else {
-				tagName = DEFAULT_NEW_TAG_NAME;
-			}
-		}
-		else {
-			//t_asdasd
-			PlainXmlType plainXmlType = PlainXmlType.parse(type);
-			if (plainXmlType != null) {
-				tagName = plainXmlType.getTagName();
-			}
-			//not t_asdasd
-			if (parameters.size() == 1) {
-				Object param = parameters.iterator().next();
-				if (param instanceof Boolean) {
-					root = ((Boolean) param).booleanValue();
-				}
-			}
-			
-		}
-		
-		Element newElement = document.createElement(tagName);
-		if (root == false) {
-			createdElements.add(newElement);
-		}
-		else {
-			document.appendChild(newElement);
-		}
-
-		return newElement;		
-	}
-*/
 	
 	@Override
 	protected synchronized boolean deleteElementInModel(Object instance) throws EolRuntimeException {
@@ -225,10 +186,11 @@ public class GsnModel extends CachedModel<Element> {
 	}
 	
 	public synchronized void collectAllElements(Node root, Collection<Element> elements) {
-		System.out.println("GSNModel - collectAllElements function");
+		//System.out.println("GSNModel - collectAllElements function");
 		
 		if (root instanceof Element) {
 			elements.add((Element) root);
+			System.out.println("GSNModel - collectAllElements function, root: " + ((Element)root).getAttribute("id") + " ,hasChild: " + root.hasChildNodes());
 		}
 		NodeList childNodes = root.getChildNodes();
 		for (int i = 0; i < childNodes.getLength(); i++) {
@@ -256,27 +218,27 @@ public class GsnModel extends CachedModel<Element> {
 		}
 		else {
 			Collection<Element> allOfType = null;
-			GsnType gsnType = GsnType.parse(type);
 			
-			if (gsnType == null) {
+			if (type == null) {
 				throw new EolModelElementTypeNotFoundException(this.getName(), type);
 			}
 			
 			if (allOfType == null) {
 				allOfType = new ArrayList<>();
 				for (Element e : allContents()) {
-					if (nodeTypeMatches(e, gsnType.getGsnType())) {
+					System.out.println("GSNModel - getAllOfTypeFromModel function, Tag: " + e.getTagName() + " ,root: " + ROOT_TAG);
+					if (e.getTagName().equalsIgnoreCase(ROOT_TAG)) {
 						allOfType.add(e);
 					}
 				}
 			}
-			
+		
 			return allOfType;
 		}
 	}
-	
+	/*
 	public synchronized boolean nodeTypeMatches(Element element, String name) {
-		System.out.println("GSNModel - nodeTypeMatches function");
+		System.out.println("GSNModel - nodeTypeMatches function, name: " + name + " ,element tag: " + element.getTagName());
 		
 		// Compare elements' xsi:type attributes
 		if (element.getAttribute("xsi:type").equalsIgnoreCase(name)) {
@@ -289,16 +251,7 @@ public class GsnModel extends CachedModel<Element> {
 		else {
 			return false;
 		}
-		/*else {
-			int colonIndex = element.getTagName().indexOf(":");
-			if (colonIndex >= 0) {
-				return element.getTagName().substring(colonIndex + 1).equalsIgnoreCase(name);
-			}
-			else {
-				return false;
-			}
-		}*/
-	}
+	}*/
 	
 	@Override
 	protected void disposeModel() {
@@ -471,7 +424,6 @@ public class GsnModel extends CachedModel<Element> {
 	
 	@Override
 	public boolean owns(Object instance) {
-		System.out.println("GSNModel - owns function, instance: " + instance.toString());
 		
 		if (instance instanceof Element) synchronized (this) {
 			Element e = (Element) instance;
@@ -486,6 +438,8 @@ public class GsnModel extends CachedModel<Element> {
 				}
 				return parent == document || createdElements.contains(parent);
 			}*/
+			
+			System.out.println("GSNModel - owns function, owns: " + (e.getOwnerDocument() == document));
 			// Might be unnecessary and wrong!!!!!!!!!!!
 			if(e.getOwnerDocument() == document) {
 				return true;
@@ -542,237 +496,5 @@ public class GsnModel extends CachedModel<Element> {
 			throw new UnsupportedOperationException("Cannot save to " + uri);
 		}
 	}
-	
-/*
-	protected HttpStatusException httpException;
- 	protected Document document;
-	protected final String ELEMENT_TYPE = "Element";
-	public static final String PROPERTY_FILE = "file";
-	public static final String PROPERTY_URI = "uri";
-	public static final String PROPERTY_TIMEOUT = "timeout";
-	
-	protected String uri = null;
-	protected File file = null;
-	protected int timeout = 60_000;
 
-	public GsnModel() {
-		propertyGetter = new GsnPropertyGetter();
-		propertySetter = new GsnPropertySetter();
-	}
-	
-	@Override
-	public void load(StringProperties properties, IRelativePathResolver resolver) throws EolModelLoadingException {
-		System.out.println("GSNModel - Load function");
-		super.load(properties, resolver);
-		String fileProperty = properties.getProperty(PROPERTY_FILE);
-		
-		if (fileProperty != null && fileProperty.length() > 0) {
-			file = new File(resolver.resolve(fileProperty));
-		}
-		else {
-			uri = properties.getProperty(PROPERTY_URI);
-			if (uri.startsWith("file:")) {
-				try {
-					file = new File(new URI(uri));
-				} catch (URISyntaxException e) {
-					throw new EolModelLoadingException(e, this);
-				}
-			}
-		}
-		load();
-	}
-	
-	public String getUri() {
-		System.out.println("GSNModel - GetUri function");
-		return uri;
-	}
-	
-	public void setUri(String uri) {
-		System.out.println("GSNModel - SetUri function");
-		this.uri = uri;
-	}
-	
-	@Override
-	public boolean isLoaded() {
-		System.out.println("GSNModel - isLoaded function");
-		return file != null;
-	}
-	
-	@Override
-	public Object getEnumerationValue(String enumeration, String label)
-			throws EolEnumerationValueNotFoundException {
-		System.out.println("GSNModel - getEnumerationValue function");
-		return null;
-	}
-
-	@Override
-	public String getTypeNameOf(Object instance) {
-		System.out.println("GSNModel - getTypeNameOf function");
-		return "t_" + ((Element) instance).tagName();
-	}
-
-	@Override
-	public Object getElementById(String id) {
-		System.out.println("GSNModel - getElementById-id function");
-		return null;
-	}
-
-	@Override
-	public String getElementId(Object instance) {
-		System.out.println("GSNModel - getElementId-instance function");
-		return null;
-	}
-
-	@Override
-	public void setElementId(Object instance, String newId) {
-		
-	}
-
-	@Override
-	public boolean owns(Object instance) {
-		System.out.println("GSNModel - owns function");
-		if (instance instanceof Element) {
-			return ((Element) instance).ownerDocument() == document;
-		}
-		else return false;
-	}
-
-	@Override
-	public boolean isInstantiable(String type) {
-		System.out.println("GSNModel - isInstantiable function");
-		return true;
-	}
-
-	@Override
-	public boolean hasType(String type) {
-		System.out.println("GSNModel - hasType function");
-		return ELEMENT_TYPE.equals(type) || PlainXmlType.parse(type) != null;
-	}
-
-	@Override
-	public boolean store(String location) {
-		System.out.println("GSNModel - store-location function");
-		try {
-			FileUtil.setFileContents(document.html(), new File(location));
-			return true;
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		}
-	}
-
-	@Override
-	public boolean store() {
-		System.out.println("GSNModel - store function");
-		if (file != null) {
-			store(file.getAbsolutePath());
-			return true;
-		}
-		else {
-			throw new UnsupportedOperationException("Cannot save to " + uri);
-		}
-	}
-
-	@Override
-	protected Collection<Element> allContentsFromModel() {
-		System.out.println("GSNModel - allContentsFromModel function");
-		return document.getAllElements();
-	}
-
-	@Override
-	protected Collection<Element> getAllOfTypeFromModel(String type)
-			throws EolModelElementTypeNotFoundException {
-		System.out.println("GSNModel - getAllOfTypeFromModel function");
-		return document.select(PlainXmlType.parse(type).getTagName());
-	}
-
-	@Override
-	protected Collection<Element> getAllOfKindFromModel(String kind)
-			throws EolModelElementTypeNotFoundException {
-		System.out.println("GSNModel - getAllOfKindFromModel function");
-		return getAllOfTypeFromModel(kind);
-	}
-
-	@Override
-	protected Element createInstanceInModel(String type)
-			throws EolModelElementTypeNotFoundException,
-			EolNotInstantiableModelElementTypeException {
-		System.out.println("GSNModel - createInstanceInModel function");
-		return document.createElement(PlainXmlType.parse(type).getTagName());
-	}
-
-	@Override
-	protected void loadModel() throws EolModelLoadingException {
-		System.out.println("GSNModel - loadModel function");
-		
-		if (readOnLoad) {
-			try {
-				if (file != null) {
-					document = Jsoup.parse(file, null);
-				}
-				else {
-					Connection connection = Jsoup.connect(uri);
-					connection.timeout(timeout);
-					document = connection.get();
-				}
-			} 
-			catch (HttpStatusException ex) {
-				document = Document.createShell(uri);
-				httpException = ex;
-			}
-			catch (IOException e) {
-				throw new EolModelLoadingException(e, this);
-			}
-		}
-		else {
-			String baseUri = null;
-			if (file != null) {
-				baseUri = file.toURI().toString();
-			}
-			else if (uri != null) {
-				baseUri = uri;
-			}
-			else {
-				baseUri = "";
-			}
-			document = Document.createShell(baseUri);
-		}
-	}
-
-	@Override
-	protected void disposeModel() {
-		System.out.println("GSNModel - disposeModel function");
-		httpException = null;
-	}
-
-	@Override
-	protected boolean deleteElementInModel(Object instance)
-			throws EolRuntimeException {
-		System.out.println("GSNModel - deleteElementInModel function");
-		((Element) instance).remove();
-		return false;
-	}
-
-	@Override
-	protected Object getCacheKeyForType(String type)
-			throws EolModelElementTypeNotFoundException {
-		System.out.println("GSNModel - getCacheKeyForType function");
-		return type;
-	}
-
-	@Override
-	protected Collection<String> getAllTypeNamesOf(Object instance) {
-		System.out.println("GSNModel - getAllTypeNamesOf function");
-		return Collections.singleton(getTypeNameOf(instance));
-	}
-	
-	public Document getDocument() {
-		System.out.println("GSNModel - getDocument function");
-		return document;
-	}
-	
-	public HttpStatusException getHttpException() {
-		System.out.println("GSNModel - getHttpException function");
-		return httpException;
-	}
-*/
 }
