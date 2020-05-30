@@ -16,40 +16,34 @@ public class GsnProperty {
 	
 	public static GsnProperty parse(String property) {
 		GsnProperty p = new GsnProperty();
-		
-		// Get elements by id
-		if(property.startsWith("i_")) {
-			//G1 turn into g, Sn13 turns into sn
-			switch(property.substring(2).replaceAll("([0-9])", "").toLowerCase()) {
-			case "g":
-				p.gsnPropertyType = GsnPropertyType.Goal;
-				break;
-			case "s":
-				p.gsnPropertyType = GsnPropertyType.Stratagy;
-				break;
-			case "sn":
-				p.gsnPropertyType = GsnPropertyType.Solution;
-				break;
-			case "c":
-				p.gsnPropertyType = GsnPropertyType.Context;
-				break;
-			case "a":
-				p.gsnPropertyType = GsnPropertyType.Assumption;
-				break;
-			case "j":
-				p.gsnPropertyType = GsnPropertyType.Justification;
-				break;
-			default:
-				p = null;
-				break;
-			}
-		}
-		else {
+
+		//G1 turn into g, Sn13 turns into sn
+		switch(property.replaceAll("([0-9])", "").toLowerCase()) {
+		case "g":
+			p.gsnPropertyType = GsnPropertyType.Goal;
+			break;
+		case "s":
+			p.gsnPropertyType = GsnPropertyType.Stratagy;
+			break;
+		case "sn":
+			p.gsnPropertyType = GsnPropertyType.Solution;
+			break;
+		case "c":
+			p.gsnPropertyType = GsnPropertyType.Context;
+			break;
+		case "a":
+			p.gsnPropertyType = GsnPropertyType.Assumption;
+			break;
+		case "j":
+			p.gsnPropertyType = GsnPropertyType.Justification;
+			break;
+		default:
 			p = null;
+			break;
 		}
 		
 		if (p!=null) {
-			p.property = property.substring(2);
+			p.property = property;//.substring(2);
 		}
 		
 		return p;
