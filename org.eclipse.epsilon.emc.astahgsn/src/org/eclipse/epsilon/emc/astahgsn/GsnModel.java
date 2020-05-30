@@ -96,30 +96,10 @@ public class GsnModel extends CachedModel<Element> {
 		this.uri = uri;
 	}
 	
-	public synchronized String getXml() {
-		System.out.println("GSNModel - getXml function");
+	public String getXml() {
+		System.out.println("GSNModel - setXml function");
 		
-		try {
-			StringWriter sw = new StringWriter();
-			Source xmlSource = new DOMSource(document);
-			Result result = new StreamResult(sw);
-	
-			// create TransformerFactory
-			TransformerFactory transformerFactory = TransformerFactory.newInstance();
-	
-			// create Transformer for transformation
-			Transformer transformer = transformerFactory.newTransformer();
-			transformer.setOutputProperty(OutputKeys.INDENT, "yes");	//Java XML Indent
-			transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
-			
-			// transform and deliver content to client
-			transformer.transform(xmlSource, result);
-			return sw.toString();
-		}
-		catch (Exception ex) {
-			ex.printStackTrace();
-			return null;
-		}
+		return xml;
 	}
 
 	public void setXml(String xml) {
@@ -236,22 +216,6 @@ public class GsnModel extends CachedModel<Element> {
 			return allOfType;
 		}
 	}
-	/*
-	public synchronized boolean nodeTypeMatches(Element element, String name) {
-		System.out.println("GSNModel - nodeTypeMatches function, name: " + name + " ,element tag: " + element.getTagName());
-		
-		// Compare elements' xsi:type attributes
-		if (element.getAttribute("xsi:type").equalsIgnoreCase(name)) {
-			return true;
-		}
-		// Get main XML tag, it contains all elements as children tags
-		else if(element.getTagName().equals(name)) {
-			return true;
-		}
-		else {
-			return false;
-		}
-	}*/
 	
 	@Override
 	protected void disposeModel() {
@@ -319,7 +283,7 @@ public class GsnModel extends CachedModel<Element> {
 		System.out.println("GSNModel - getTypeNameOf function");
 		
 		if (instance instanceof Element) {
-			return "t_" + ((Element) instance).getTagName();
+			return ((Element) instance).getTagName();
 		}
 		else {
 			return instance.getClass().getName();
@@ -337,9 +301,7 @@ public class GsnModel extends CachedModel<Element> {
 	protected Collection<String> getAllTypeNamesOf(Object instance) {
 		System.out.println("GSNModel - getAllTypeNamesOf function");
 		
-		//return Collections.singleton(getTypeNameOf(instance));
-		// Types are fixed and cannot change
-		return new ArrayList<String>(Arrays.asList("n_goal", "n_strategy", "n_solution", "n_context", "n_assumption", "n_justification", "l_context", "l_inference", "l_evidence"));
+		return Collections.singleton(getTypeNameOf(instance));
 	}
 
 	
@@ -354,8 +316,8 @@ public class GsnModel extends CachedModel<Element> {
 	@Override
 	public boolean hasType(String type) {
 		System.out.println("GSNModel - hasType function, type: " + type);
-		
-		return ELEMENT_TYPE.equals(type) || (GsnType.parse(type) != null);
+		// Only ELEMENT_TYPE and gsn would work
+		return ELEMENT_TYPE.equals(type) || "gsn".equals(type);
 	}
 
 	
@@ -427,30 +389,15 @@ public class GsnModel extends CachedModel<Element> {
 		
 		if (instance instanceof Element) synchronized (this) {
 			Element e = (Element) instance;
-			/*Node parent = e.getParentNode();
-			
-			if (parent == null) {
-				return createdElements.contains(instance);
-			}
-			else {
-				while (parent.getParentNode() != null) {
-					parent = parent.getParentNode();
-				}
-				return parent == document || createdElements.contains(parent);
-			}*/
 			
 			System.out.println("GSNModel - owns function, owns: " + (e.getOwnerDocument() == document));
-			// Might be unnecessary and wrong!!!!!!!!!!!
+			// Get element's owner which is root tag
 			if(e.getOwnerDocument() == document) {
 				return true;
 			}
-			else {
-				return false;
-			}
 		}
-		else {
-			return false;
-		}
+		// Else
+		return false;
 	}
 
 	
