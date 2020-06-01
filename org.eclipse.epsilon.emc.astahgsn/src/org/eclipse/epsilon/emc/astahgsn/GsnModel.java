@@ -2,15 +2,11 @@ package org.eclipse.epsilon.emc.astahgsn;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.StringWriter;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
@@ -41,14 +37,12 @@ public class GsnModel extends CachedModel<Element> {
 	protected String uri = null;
 	protected File file = null;
 	protected String xml = null;
-	protected int timeout = 60_000;
 	
 	protected ArrayList<Element> createdElements = new ArrayList<>();
 	protected static final String ELEMENT_TYPE = "Element";
 	protected static final String DEFAULT_NEW_TAG_NAME = "element";
 	public static final String PROPERTY_FILE = "file";
 	public static final String PROPERTY_URI = "uri";
-	public static final String PROPERTY_TIMEOUT = "timeout";
 	
 	public static final String ROOT_TAG = "ARM:Argumentation";
 	
