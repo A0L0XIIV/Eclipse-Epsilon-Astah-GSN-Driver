@@ -20,7 +20,6 @@ public class GsnPropertyGetter extends JavaPropertyGetter {
 
 	@Override
 	public Object invoke(Object object, String property, IEolContext context) throws EolRuntimeException {
-		System.out.println("GSNPropertyGetter - invoke function");
 		
 		if (object instanceof Element) synchronized (model) {
 			Element element = (Element) object;
@@ -77,6 +76,8 @@ public class GsnPropertyGetter extends JavaPropertyGetter {
 				return findElementByAttribute(element, "id", gsnProperty.getProperty());
 			}
 			
+
+			System.out.println("GSNPropertyGetter - invoke function - NONEOFTHEM");
 			// Not source, target, content or ID
 			return null;
 			
