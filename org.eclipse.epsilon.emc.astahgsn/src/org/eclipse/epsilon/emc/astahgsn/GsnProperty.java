@@ -9,33 +9,56 @@
  ******************************************************************************/
 package org.eclipse.epsilon.emc.astahgsn;
 
+import org.w3c.dom.Element;
+
 public class GsnProperty {
 	
 	protected GsnPropertyType gsnPropertyType;
+	protected String idPrefix;
+	protected String xsiType;
 	protected String property;;
 	
 	public static GsnProperty parse(String property) {
 		GsnProperty p = new GsnProperty();
 
-		//G1 turn into g, Sn13 turns into sn
+		// ID: G1 turn into g, Sn13 turns into sn
+		// Type set: goal, context, ...
 		switch(property.replaceAll("([0-9])", "").toLowerCase()) {
 		case "g":
+		case "goal":
 			p.gsnPropertyType = GsnPropertyType.Goal;
+			p.idPrefix = "G";
+			p.xsiType = "ARM:Claim";
 			break;
 		case "s":
+		case "stratagy":
 			p.gsnPropertyType = GsnPropertyType.Stratagy;
+			p.idPrefix = "S";
+			p.xsiType = "ARM:ArgumentReasoning";
 			break;
 		case "sn":
+		case "solution":
 			p.gsnPropertyType = GsnPropertyType.Solution;
+			p.idPrefix = "Sn";
+			p.xsiType = "ARM:InformationElement";
 			break;
 		case "c":
+		case "context":
 			p.gsnPropertyType = GsnPropertyType.Context;
+			p.idPrefix = "C";
+			p.xsiType = "ARM:InformationElement";
 			break;
 		case "a":
+		case "assumption":
 			p.gsnPropertyType = GsnPropertyType.Assumption;
+			p.idPrefix = "A";
+			p.xsiType = "ARM:Claim";
 			break;
 		case "j":
+		case "justification":
 			p.gsnPropertyType = GsnPropertyType.Justification;
+			p.idPrefix = "J";
+			p.xsiType = "ARM:Claim";
 			break;
 		default:
 			p = null;
@@ -56,6 +79,14 @@ public class GsnProperty {
 	
 	public GsnPropertyType getType() {
 		return gsnPropertyType;
+	}
+	
+	public String getIdPrefix() {
+		return idPrefix;
+	}
+	
+	public String getXsiType() {
+		return xsiType;
 	}
 	
 }
