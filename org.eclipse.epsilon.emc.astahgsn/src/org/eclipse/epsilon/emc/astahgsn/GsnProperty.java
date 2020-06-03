@@ -9,8 +9,6 @@
  ******************************************************************************/
 package org.eclipse.epsilon.emc.astahgsn;
 
-import org.w3c.dom.Element;
-
 public class GsnProperty {
 	
 	protected GsnPropertyType gsnPropertyType;

@@ -69,10 +69,10 @@ public class GsnPropertyGetter extends JavaPropertyGetter {
 			GsnProperty gsnProperty = GsnProperty.parse(property);
 			
 			// Get element with id --> G1, Sn14, J4
-			if(gsnProperty != null && element.hasChildNodes()) {
+			if(gsnProperty != null) {
 				System.out.println("GSNPropertyGetter - invoke function - ID");
 				
-				// Element is root node, call findElementByAttribute with it
+				// Call findElementByAttribute with element
 				return findElementByAttribute(element, "id", gsnProperty.getProperty());
 			}
 			
@@ -86,25 +86,36 @@ public class GsnPropertyGetter extends JavaPropertyGetter {
 	}
 	
 
-	public Object findElementByAttribute(Node rootElement, String attributeName, String attributeValue) {
-		NodeList childNodes = rootElement.getChildNodes();
+	public Object findElementByAttribute(Node node, String attributeName, String attributeValue) {
 		List<Element> result = new ArrayList<Element>();
 		
-		// Loop over root's child tags
-		for (int i=0; i<childNodes.getLength(); i++) {
-			// Get root's child
-			Object object = childNodes.item(i);
-			// Find the given attributeNane in all nodes with loop because NodeList doesn't have find function
-			if (object instanceof Element) {
-				Element element = (Element) object;
-				if(element.hasAttribute(attributeName) && 
-				   element.getAttribute(attributeName).equalsIgnoreCase(attributeValue)) {
-					
-					result.add(element);
+		// Root element and it's children
+		if(node instanceof Element && node.hasChildNodes()) {
+			NodeList childNodes = node.getChildNodes();
+			
+			// Loop over root's child tags
+			for (int i=0; i<childNodes.getLength(); i++) {
+				// Get root's child
+				Object object = childNodes.item(i);
+				// Find the given attributeNane in all nodes with loop because NodeList doesn't have find function
+				if (object instanceof Element) {
+					Element e = (Element) object;
+					if(e.getAttribute(attributeName).equalsIgnoreCase(attributeValue)) {
+						
+						result.add(e);
+					}
 				}
 			}
 		}
-		
+		// One argumentElement
+		else if (node instanceof Element 
+				&& ((Element) node).getAttribute(attributeName).equalsIgnoreCase(attributeValue)) {
+					result.add((Element) node);
+		}
+		else {
+			return null;
+		}
+	
 		// Empty list
 		if(result.isEmpty())
 			return null;
@@ -127,7 +138,6 @@ public class GsnPropertyGetter extends JavaPropertyGetter {
 				// Get root's children
 				Object o = childNodes.item(i);
 				if (o instanceof Element 
-					&& ((Element) o).hasAttribute(attributeName) 
 					&& !((Element) o).getAttribute(attributeName).equals("")) {
 					attributeValues.add(((Element) o).getAttribute(attributeName));
 				}
