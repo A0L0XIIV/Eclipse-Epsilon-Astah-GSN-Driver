@@ -5,6 +5,8 @@ import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
+
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.Result;
@@ -28,7 +30,6 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-
 public class GsnModel extends CachedModel<Element> {
 	
 	protected String idAttributeName = "xmi:id";
@@ -45,6 +46,7 @@ public class GsnModel extends CachedModel<Element> {
 	public static final String PROPERTY_URI = "uri";
 	
 	public static final String ROOT_TAG = "ARM:Argumentation";
+	public static final String ELEMENT_TAG = "argumentElement";
 	
 	public GsnModel() {
 		propertyGetter = new GsnPropertyGetter(this);
@@ -381,7 +383,7 @@ public class GsnModel extends CachedModel<Element> {
 	@Override
 	public boolean owns(Object instance) {
 		
-		if (instance instanceof Element) synchronized (this) {
+		if (instance instanceof Element || instance instanceof Node) synchronized (this) {
 			Element e = (Element) instance;
 			
 			System.out.println("GSNModel - owns function, owns: " + (e.getOwnerDocument() == document));
@@ -389,9 +391,24 @@ public class GsnModel extends CachedModel<Element> {
 			if(e.getOwnerDocument() == document) {
 				return true;
 			}
+			
+			Node parent = e.getParentNode();
+			
+			if (parent == null) {
+				System.out.println("PlainXMLModel - owns function - IF");
+				return createdElements.contains(instance);
+			}
+			else {
+				while (parent.getParentNode() != null) {
+					parent = parent.getParentNode();
+				}
+				System.out.println("PlainXMLModel - owns function - ELSE");
+				return parent == document || createdElements.contains(parent);
+			}
 		}
-		// Else
-		return false;
+		else {
+			return false;
+		}
 	}
 
 	
