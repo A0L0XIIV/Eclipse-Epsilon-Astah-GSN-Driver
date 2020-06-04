@@ -65,20 +65,7 @@ public class GsnModel extends CachedModel<Element> {
 		if (oldRoot != null) document.removeChild(oldRoot);
 		document.appendChild(node);
 	}
-	
-	@Override
-	protected synchronized Collection<Element> allContentsFromModel() {
-		System.out.println("GSNModel - allContentsFromModel function");
-		
-		Collection<Element> elements = new ArrayList<>();
-		collectAllElements(document, elements);
-		for (Element created : createdElements) {
-			if (!elements.contains(created) && created.getParentNode() == null) {
-				elements.add(created);
-			}
-		}	
-		return elements;
-	}
+
 	
 	public String getUri() {
 		System.out.println("GSNModel - getUri function");
@@ -161,6 +148,23 @@ public class GsnModel extends CachedModel<Element> {
 		return true;
 	}
 	
+	
+	
+	@Override
+	protected synchronized Collection<Element> allContentsFromModel() {
+		System.out.println("GSNModel - allContentsFromModel function");
+		
+		Collection<Element> elements = new ArrayList<>();
+		collectAllElements(document, elements);
+		for (Element created : createdElements) {
+			if (!elements.contains(created) && created.getParentNode() == null) {
+				elements.add(created);
+			}
+		}	
+		return elements;
+	}
+	
+	
 	public synchronized void collectAllElements(Node root, Collection<Element> elements) {
 		//System.out.println("GSNModel - collectAllElements function");
 		
@@ -184,6 +188,7 @@ public class GsnModel extends CachedModel<Element> {
 		
 		return getAllOfType(type);
 	}
+	
 
 	@Override
 	protected Collection<Element> getAllOfTypeFromModel(String type) throws EolModelElementTypeNotFoundException {
@@ -203,7 +208,7 @@ public class GsnModel extends CachedModel<Element> {
 				allOfType = new ArrayList<>();
 				for (Element e : allContents()) {
 					System.out.println("GSNModel - getAllOfTypeFromModel function, Tag: " + e.getTagName() + " ,root: " + ROOT_TAG);
-					if (e.getTagName().equalsIgnoreCase(ROOT_TAG)) {
+					if (e.getTagName().equalsIgnoreCase(ELEMENT_TAG)) {
 						allOfType.add(e);
 					}
 				}
@@ -213,13 +218,38 @@ public class GsnModel extends CachedModel<Element> {
 		}
 	}
 	
+	
 	@Override
-	protected void disposeModel() {
-		System.out.println("GSNModel - disposeModel function");
+	public boolean owns(Object instance) {
 		
-		document = null;
-		xml = null;
+		if (instance instanceof Element) synchronized (this) {
+			Element e = (Element) instance;
+			
+			System.out.println("GSNModel - owns function, owns: " + (e.getOwnerDocument() == document));
+			// Get element's owner which is root tag
+			if(e.getOwnerDocument() == document) {
+				return true;
+			}
+			
+			Node parent = e.getParentNode();
+			
+			if (parent == null) {
+				System.out.println("PlainXMLModel - owns function - IF");
+				return createdElements.contains(instance);
+			}
+			else {
+				while (parent.getParentNode() != null) {
+					parent = parent.getParentNode();
+				}
+				System.out.println("PlainXMLModel - owns function - ELSE");
+				return parent == document || createdElements.contains(parent);
+			}
+		}
+		else {
+			return false;
+		}
 	}
+
 
 	@Override
 	public Object getElementById(String id) {
@@ -332,6 +362,17 @@ public class GsnModel extends CachedModel<Element> {
 		return (instance instanceof Element);
 	}
 	
+	
+	
+	@Override
+	protected void disposeModel() {
+		System.out.println("GSNModel - disposeModel function");
+		
+		document = null;
+		xml = null;
+	}
+	
+	
 	@Override
 	protected synchronized void loadModel() throws EolModelLoadingException {
 		System.out.println("GSNModel - loadModel function");
@@ -379,38 +420,6 @@ public class GsnModel extends CachedModel<Element> {
 		load();
 	}
 	
-	
-	@Override
-	public boolean owns(Object instance) {
-		
-		if (instance instanceof Element || instance instanceof Node) synchronized (this) {
-			Element e = (Element) instance;
-			
-			System.out.println("GSNModel - owns function, owns: " + (e.getOwnerDocument() == document));
-			// Get element's owner which is root tag
-			if(e.getOwnerDocument() == document) {
-				return true;
-			}
-			
-			Node parent = e.getParentNode();
-			
-			if (parent == null) {
-				System.out.println("PlainXMLModel - owns function - IF");
-				return createdElements.contains(instance);
-			}
-			else {
-				while (parent.getParentNode() != null) {
-					parent = parent.getParentNode();
-				}
-				System.out.println("PlainXMLModel - owns function - ELSE");
-				return parent == document || createdElements.contains(parent);
-			}
-		}
-		else {
-			return false;
-		}
-	}
-
 	
 	@Override
 	public synchronized boolean store(String location) {
