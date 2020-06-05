@@ -3,6 +3,7 @@ package org.eclipse.epsilon.emc.astahgsn;
 import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
 import org.eclipse.epsilon.eol.execute.context.IEolContext;
 import org.eclipse.epsilon.eol.execute.introspection.java.JavaPropertySetter;
+import org.eclipse.epsilon.eol.types.EolSequence;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -19,6 +20,12 @@ public class GsnPropertySetter extends JavaPropertySetter {
 	public void invoke(Object target, String property, Object value, IEolContext context) throws EolRuntimeException {
 
 		System.out.println("GSNPropertySetter - invoke function");
+		/*
+		if(target instanceof EolSequence
+			&& ((EolSequence) target).get(0) instanceof Element) {
+			target = ((EolSequence) target).get(0);
+		}*/
+		
 		if (target instanceof Element) synchronized (model) {
 			Element element = (Element) target;
 			
@@ -62,10 +69,10 @@ public class GsnPropertySetter extends JavaPropertySetter {
 					element.setAttribute("xsi:type", g.getXsiType());
 					// Find new type's highest ID number e.g. G5 and make it new one G6
 					String newXmiId = null;
-					// Find current highest id number and create new id
-					newXmiId = g.getIdPrefix() + getTypesHighestIdNumber(String.valueOf(value), element.getParentNode());
+					// Find current highest id number +1 and create new id
+					newXmiId = g.getIdPrefix() + (getTypesHighestIdNumber(String.valueOf(value), element.getParentNode()) + 1);
 					// Change element's id attribute to new type id
-					element.setAttribute("xmi:id", newXmiId);
+					element.setAttribute("id", newXmiId);
 				}
 				return;
 			}
@@ -82,6 +89,7 @@ public class GsnPropertySetter extends JavaPropertySetter {
 			
 			NodeList childNodes = root.getChildNodes();
 			int maxId = 0;
+			int currentId = 0;
 			GsnProperty g = GsnProperty.parse(type);
 			
 			for (int i=0; i<childNodes.getLength(); i++) {
@@ -97,7 +105,9 @@ public class GsnPropertySetter extends JavaPropertySetter {
 						// If parsed 'type' and parsed 'element id attribute' are the same
 						if(gElement.getType() == g.getType() ) {
 							// Get element's id attribute's number, remove non-digit characters and parse it to int
-							maxId = Integer.parseInt(element.getAttribute("id").replaceAll("[^\\d.]", ""));
+							currentId = Integer.parseInt(element.getAttribute("id").replaceAll("[^\\d.]", ""));
+							if(currentId > maxId)
+								maxId = currentId;
 						}
 					}
 				}
