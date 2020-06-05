@@ -6,6 +6,7 @@ import java.util.List;
 import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
 import org.eclipse.epsilon.eol.execute.context.IEolContext;
 import org.eclipse.epsilon.eol.execute.introspection.java.JavaPropertyGetter;
+import org.eclipse.epsilon.eol.types.EolModelElementType;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -21,8 +22,30 @@ public class GsnPropertyGetter extends JavaPropertyGetter {
 	@Override
 	public Object invoke(Object object, String property, IEolContext context) throws EolRuntimeException {
 		
-		if (object instanceof Element) synchronized (model) {
+		if (object instanceof Element
+			|| object instanceof EolModelElementType
+			&& ((EolModelElementType) object).isInstantiable()
+			&& ((EolModelElementType) object).getTypeName().equalsIgnoreCase("gsn")) synchronized (model) {
+				
+			// Get all elements (gsn.all)
+			if ("all".equals(property)) {
+				System.out.println("GSNPropertyGetter - invoke function - ALL");
+				// Invoke JavaPropertyGetter, calls GsnModel's getAllOfTypeFromModel function
+				super.invoke(object, property, context);
+				return null;
+			}
+			
+			// gsn.ID access, object is EolModelElementType not Element nor [argumentElement]
+			// In order to cast object to Element, get models first element
+			if(object instanceof EolModelElementType
+				&& !((EolModelElementType) object).getAll().isEmpty()) {
+				System.out.println("GSNPropertyGetter - invoke function - GSN ID");
+				// Get first element of the model which is root tag (It includes child tags)
+				object = ((EolModelElementType) object).getAll().toArray()[0];
+			}
+				
 			Element element = (Element) object;
+			
 						
 			// Get element's type: goal, solution, evidence, ...
 			if ("gsntype".equals(property)) {
