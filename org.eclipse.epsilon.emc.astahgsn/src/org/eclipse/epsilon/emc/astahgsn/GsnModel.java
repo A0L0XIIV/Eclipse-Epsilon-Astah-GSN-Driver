@@ -25,6 +25,8 @@ import org.eclipse.epsilon.eol.exceptions.models.EolModelLoadingException;
 import org.eclipse.epsilon.eol.exceptions.models.EolNotInstantiableModelElementTypeException;
 import org.eclipse.epsilon.eol.models.CachedModel;
 import org.eclipse.epsilon.eol.models.IRelativePathResolver;
+import org.eclipse.epsilon.eol.types.EolModelElementType;
+import org.eclipse.epsilon.eol.types.EolSequence;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -208,7 +210,7 @@ public class GsnModel extends CachedModel<Element> {
 				allOfType = new ArrayList<>();
 				for (Element e : allContents()) {
 					System.out.println("GSNModel - getAllOfTypeFromModel function, Tag: " + e.getTagName() + " ,root: " + ROOT_TAG);
-					if (e.getTagName().equalsIgnoreCase(ELEMENT_TAG)) {
+					if (e.getTagName().equalsIgnoreCase(ROOT_TAG) /*|| e.getTagName().equalsIgnoreCase(ELEMENT_TAG)*/) {
 						allOfType.add(e);
 					}
 				}
@@ -222,6 +224,7 @@ public class GsnModel extends CachedModel<Element> {
 	@Override
 	public boolean owns(Object instance) {
 		
+		// Element owner check [argumentElement]
 		if (instance instanceof Element) synchronized (this) {
 			Element e = (Element) instance;
 			
@@ -234,17 +237,27 @@ public class GsnModel extends CachedModel<Element> {
 			Node parent = e.getParentNode();
 			
 			if (parent == null) {
-				System.out.println("PlainXMLModel - owns function - IF");
+				System.out.println("GSNModel - owns function - IF");
 				return createdElements.contains(instance);
 			}
 			else {
 				while (parent.getParentNode() != null) {
 					parent = parent.getParentNode();
 				}
-				System.out.println("PlainXMLModel - owns function - ELSE");
+				System.out.println("GSNModel - owns function - ELSE");
 				return parent == document || createdElements.contains(parent);
 			}
 		}
+		// Initial model check, (gsn.all, gsn.G1, ...)
+		else if(instance instanceof EolModelElementType
+				&& ((EolModelElementType) instance).getTypeName().equalsIgnoreCase("gsn")){
+			return true;
+		}/*
+		else if(instance instanceof EolSequence
+				&& ((EolSequence) instance).get(0) instanceof Element
+				&& ((Element) ((EolSequence) instance).get(0)).getOwnerDocument() == document ) {
+			return true;
+		}*/
 		else {
 			return false;
 		}
