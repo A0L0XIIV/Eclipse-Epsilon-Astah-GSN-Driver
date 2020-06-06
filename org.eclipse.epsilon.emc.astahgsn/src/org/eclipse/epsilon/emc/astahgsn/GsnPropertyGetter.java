@@ -30,9 +30,16 @@ public class GsnPropertyGetter extends JavaPropertyGetter {
 			// Get all elements (gsn.all)
 			if ("all".equals(property)) {
 				System.out.println("GSNPropertyGetter - invoke function - ALL");
-				// Invoke JavaPropertyGetter, calls GsnModel's getAllOfTypeFromModel function
-				super.invoke(object, property, context);
-				return null;
+				// Invoke JavaPropertyGetter, calls GsnModel's getAllOfTypeFromModel function and fills model
+				if(((EolModelElementType) object).getAll().isEmpty()) {
+					super.invoke(object, property, context);
+					return null;
+				}
+				// Return root tag. It includes all argumentElement tags as well
+				else {
+					// Object has both root tag and its children. Get the first element which is root tag
+					return ((EolModelElementType) object).getAll().toArray()[0];
+				}
 			}
 			
 			// gsn.ID access, object is EolModelElementType not Element nor [argumentElement]
