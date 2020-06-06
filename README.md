@@ -12,17 +12,26 @@ Eclipse Epsilon Astah GSN Driver with EMC-XMI integration
 * Import the `org.eclipse.epsilon.emc.astahgsn` and `org.eclipse.epsilon.emc.astahgsn.dt` projects into your workspace
 * Run the main method of the `GsnModel` class in `org.eclipse.epsilon.emc.astahgsn` **or**
 * Start a nested Eclipse instance by selecting the `org.eclipse.epsilon.emc.astahgsn project` and clicking `Run As -> Eclipse Application`
+* This step is the same as [Epsilon EMC-HTML](https://github.com/epsilonlabs/emc-html)
 
-## Examples
+## Getter Examples
 
-* gsn.all --> For accessing all GSN elements
-* var main = gsn.all;
-* main.goal --> Returns all goal elements
-* main.goal.content --> Returns all goal elements' content
-* main.G1 --> Returns G1 goal element
-* main.G1.content --> Returns G1's content
-* main.G1.gsntype --> Returns G1's type (Goal)
-* main.G1.target, main.G1.source --> Returns G1 element's all target or source link elements
-* main.G1.id --> Returns G1's id (G1)
+* All elements: *gsn.all* --> For accessing all GSN elements
+* Specific type: gsn.goal --> Returns all goal elements
+* `Types:` **goal, strategy, solution, context, assumption, justification, inference, evidence, assertedcontext**
+* Element by ID: *gsn.G1* --> Returns G1 goal element
+* Element content: *gsn.G1.content* --> Returns G1's content
+* Element type: *gsn.G1.gsntype* --> Returns G1's type (Goal)
+* Element (node) links: *gsn.G1.target, gsn.G1.source* --> Returns G1 element's all targeted or sourced link elements
+* Element ID: *gsn.G1.id* --> Returns G1's id (G1)
+* All links: *gsn.links* --> Returns all link elements
+* All nodes: *gsn.nodes* --> Returns all node elements
+* Get specific link element: *gsn.t_G3_s_J4* --> Returns link element with target: G3 and sourceL J4
+* `PRINTING: gsn.C5.content.println():`
 
-* Currently Setters doesn't work but they are going to use the same principles
+## Setter Examples
+
+* Set element (node) content: *gsn.Sn5.content = "Example";*
+* Set link element's source: *gsn.t_A12_s_G7.source = gsn.Sn7;*
+* Set link element's target: *gsn.t_A12_s_G7.target = gsn.Sn7;*
+* Set element's (node) gsn type: *gsn.S9.gsntype = "goal";* --> Changes element's type and assigns new id (last/highest)
