@@ -89,16 +89,50 @@ public class GsnPropertyGetter extends JavaPropertyGetter {
 				return getElementAttribute(element, "id");
 			}
 			
+			// Get all link elements
+			if ("links".equalsIgnoreCase(property)) {
+				System.out.println("GSNPropertyGetter - invoke function - links");
+				// Link elements' content attributes are empty, could use this while searching
+				// However, nodes can have empty content too thus, 3 link xsi:types used in search
+			}
+			
+			// Get all link elements
+			if ("nodes".equalsIgnoreCase(property)) {
+				System.out.println("GSNPropertyGetter - invoke function - nodes");
+			}
+			
+			// Get specific link element by target and source node IDs
+			if(property.startsWith("t_")) {
+				// Example t_G2_s_S3
+				// Parse property string for target and source node IDs
+		        String targetId = property.substring(2, property.indexOf("_s_"));
+		        String sourceId = property.substring(property.indexOf("_s_") + 3);
+		        
+		        // Found target and source nodes with parsed Ids
+		        Object target = findElementByAttribute(element, "id", targetId);
+		        Object source = findElementByAttribute(element, "id", sourceId);
+		        
+		        // If nodes aren't empty, find link element
+		        if(target != null && source != null) {
+		        	return findLinkByNodeIDs(element, ((Element) target).getAttribute("xmi:id"), ((Element) source).getAttribute("xmi:id"));
+		        }
+		        else {
+		        	return null;
+		        }
+			}
+			
+			
 			GsnProperty gsnProperty = GsnProperty.parse(property);
 			
-			// Get element with id --> G1, Sn14, J4
+			// Get element by id --> G1, Sn14, J4
+			// Or by type name --> goal, solution
 			if(gsnProperty != null) {
 				System.out.println("GSNPropertyGetter - invoke function - ID");
 				
-				// Call findElementByAttribute with element
+				// Call findElementByAttribute with element and use id attribute
 				return findElementByAttribute(element, "id", gsnProperty.getProperty());
+				
 			}
-			
 
 			System.out.println("GSNPropertyGetter - invoke function - NONEOFTHEM");
 			// Not source, target, content or ID
@@ -108,7 +142,7 @@ public class GsnPropertyGetter extends JavaPropertyGetter {
 		else return super.invoke(object, property, context);
 	}
 	
-
+	
 	public Object findElementByAttribute(Node node, String attributeName, String attributeValue) {
 		List<Element> result = new ArrayList<Element>();
 		
@@ -119,13 +153,23 @@ public class GsnPropertyGetter extends JavaPropertyGetter {
 			// Loop over root's child tags
 			for (int i=0; i<childNodes.getLength(); i++) {
 				// Get root's child
-				Object object = childNodes.item(i);
+				Object childNode = childNodes.item(i);
 				// Find the given attributeNane in all nodes with loop because NodeList doesn't have find function
-				if (object instanceof Element) {
-					Element e = (Element) object;
+				if (childNode instanceof Element) {
+					// If childNode is an instance of the Element class, cast it to the Element
+					Element e = (Element) childNode;
+					// Node class doesn't have getAttribute function thus casted it to Element
 					if(e.getAttribute(attributeName).equalsIgnoreCase(attributeValue)) {
-						
+						// Add all matches into result list
 						result.add(e);
+					}
+					// For getting one type of elements, such as all goal elements. "goal" doesn't have any digits
+					else if(!hasDigit(attributeValue)) {
+						// ID (G1, J4) and target-source values (_4VWzZ5CNEeqaz4qJsgFt4g) have digits so they won't get in there
+						GsnProperty g = GsnProperty.parse(e.getAttribute(attributeName));
+						if(g != null && attributeValue.equalsIgnoreCase(g.getType().toString())) {
+							result.add(e);
+						}
 					}
 				}
 			}
@@ -133,7 +177,8 @@ public class GsnPropertyGetter extends JavaPropertyGetter {
 		// One argumentElement
 		else if (node instanceof Element 
 				&& ((Element) node).getAttribute(attributeName).equalsIgnoreCase(attributeValue)) {
-					result.add((Element) node);
+			//result.add((Element) node);
+			return (Element) node;
 		}
 		else {
 			return null;
@@ -149,6 +194,7 @@ public class GsnPropertyGetter extends JavaPropertyGetter {
 		else
 			return result;
 	}
+	
 	
 	public Object getElementAttribute(Node node, String attributeName) {
 		// If it's root tag, loop over its children and return all attribute values
@@ -184,6 +230,43 @@ public class GsnPropertyGetter extends JavaPropertyGetter {
 			else
 				return null;
 		}
+	}
+	
+	
+	public Object findLinkByNodeIDs(Node node, String targetXmiId, String sourceXmiId) {
+        
+        if(node instanceof Element && node.hasChildNodes()) {
+			NodeList childNodes = node.getChildNodes();
+			
+			// Loop over root's child tags
+			for (int i=0; i<childNodes.getLength(); i++) {
+				// Get root's child
+				Object childNode = childNodes.item(i);
+				// Find the given attributeNane in all nodes with loop because NodeList doesn't have find function
+				if (childNode instanceof Element) {
+					// If childNode is an instance of the Element class, cast it to the Element
+					Element e = (Element) childNode;
+					// Node class doesn't have getAttribute function thus casted it to Element
+					if(e.getAttribute("target").equalsIgnoreCase(targetXmiId)
+						&& e.getAttribute("source").equalsIgnoreCase(sourceXmiId)) {
+						// Found link element with given target and source xmi IDs
+						return e;
+					}
+				}
+			}
+		}
+
+		return null;
+	}
+	
+	
+	public boolean hasDigit(String input) {
+	    for (int i = 0; i < input.length(); ++i) {
+	        if (Character.isDigit(input.charAt(i))) {
+	        	return true;
+	        }
+	    }
+	    return false;
 	}
 
 }
