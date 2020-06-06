@@ -252,8 +252,12 @@ public class GsnModel extends CachedModel<Element> {
 		else if(instance instanceof EolModelElementType
 				&& ((EolModelElementType) instance).getTypeName().equalsIgnoreCase("gsn")){
 			return true;
-		}/*
-		else if(instance instanceof EolSequence
+		}
+		else if(instance instanceof ArrayList
+				&& ((ArrayList) instance).get(0) instanceof Element) {
+			return true;
+		}
+		/*else if(instance instanceof EolSequence
 				&& ((EolSequence) instance).get(0) instanceof Element
 				&& ((Element) ((EolSequence) instance).get(0)).getOwnerDocument() == document ) {
 			return true;
