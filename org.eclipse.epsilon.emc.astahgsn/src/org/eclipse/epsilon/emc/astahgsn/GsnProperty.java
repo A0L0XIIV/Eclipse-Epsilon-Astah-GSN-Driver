@@ -14,49 +14,79 @@ public class GsnProperty {
 	protected GsnPropertyType gsnPropertyType;
 	protected String idPrefix;
 	protected String xsiType;
-	protected String property;;
+	protected String property;
+	protected boolean isNode = false;
+	protected boolean isLink = false;
 	
 	public static GsnProperty parse(String property) {
 		GsnProperty p = new GsnProperty();
 
-		// ID: G1 turn into g, Sn13 turns into sn
-		// Type set: goal, context, ...
+		// ID: Remove digits & lower case --> G1 turn into g, Sn13 turns into sn
+		// Type: lower case --> goal, context, ...
 		switch(property.replaceAll("([0-9])", "").toLowerCase()) {
+		// Nodes
 		case "g":
 		case "goal":
 			p.gsnPropertyType = GsnPropertyType.Goal;
 			p.idPrefix = "G";
 			p.xsiType = "ARM:Claim";
+			p.isNode = true;
 			break;
 		case "s":
 		case "stratagy":
 			p.gsnPropertyType = GsnPropertyType.Stratagy;
 			p.idPrefix = "S";
 			p.xsiType = "ARM:ArgumentReasoning";
+			p.isNode = true;
 			break;
 		case "sn":
 		case "solution":
 			p.gsnPropertyType = GsnPropertyType.Solution;
 			p.idPrefix = "Sn";
 			p.xsiType = "ARM:InformationElement";
+			p.isNode = true;
 			break;
 		case "c":
 		case "context":
 			p.gsnPropertyType = GsnPropertyType.Context;
 			p.idPrefix = "C";
 			p.xsiType = "ARM:InformationElement";
+			p.isNode = true;
 			break;
 		case "a":
 		case "assumption":
 			p.gsnPropertyType = GsnPropertyType.Assumption;
 			p.idPrefix = "A";
 			p.xsiType = "ARM:Claim";
+			p.isNode = true;
 			break;
 		case "j":
 		case "justification":
 			p.gsnPropertyType = GsnPropertyType.Justification;
 			p.idPrefix = "J";
 			p.xsiType = "ARM:Claim";
+			p.isNode = true;
+			break;
+		// Links
+		case "inference":
+		case "assertedinference":
+			p.gsnPropertyType = GsnPropertyType.Inference;
+			p.idPrefix = "";
+			p.xsiType = "ARM:AssertedInference";
+			p.isLink = true;
+			break;
+		case "evidence":
+		case "assertedevidence":
+			p.gsnPropertyType = GsnPropertyType.Evidence;
+			p.idPrefix = "";
+			p.xsiType = "ARM:AssertedEvidence";
+			p.isLink = true;
+			break;
+		case "assertedcontext":
+			p.gsnPropertyType = GsnPropertyType.AssertedContext;
+			p.idPrefix = "";
+			p.xsiType = "ARM:AssertedContext";
+			p.isLink = true;
 			break;
 		default:
 			p = null;
@@ -64,7 +94,7 @@ public class GsnProperty {
 		}
 		
 		if (p!=null) {
-			p.property = property;//.substring(2);
+			p.property = property;
 		}
 		
 		return p;
@@ -85,6 +115,14 @@ public class GsnProperty {
 	
 	public String getXsiType() {
 		return xsiType;
+	}
+	
+	public boolean isNode() {
+		return isNode;
+	}
+	
+	public boolean isLink() {
+		return isLink;
 	}
 	
 }
