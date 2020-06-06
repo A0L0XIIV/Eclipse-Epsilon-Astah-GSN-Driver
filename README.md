@@ -1,7 +1,8 @@
 # Eclipse-Epsilon-Astah-GSN-Driver
 Eclipse Epsilon Astah GSN Driver with EMC-XMI integration
 
-* GSN = Goal Structuring Notations
+* GSN: [Goal Structuring Notations](https://modeling-languages.com/goal-structuring-notation-introduction/)
+* [Astah GSN](https://astah.net/products/astah-gsn/)
 * Only works with Astah GSN models
 * Use Astah GSN XMI export tool to get XMI version of the models
 * Only works with `XMI` files, not `AGML` files
