@@ -100,12 +100,41 @@ public class GsnPropertyGetter extends JavaPropertyGetter {
 			if ("links".equalsIgnoreCase(property)) {
 				System.out.println("GSNPropertyGetter - invoke function - links");
 				// Link elements' content attributes are empty, could use this while searching
-				// However, nodes can have empty content too thus, 3 link xsi:types used in search
+				// However, nodes can have empty content too thus, id attribute used in search
+				// Links' id attribute is empty, find elements with empty id attribute and return them
+				return findElementByAttribute(element, "id", "");
 			}
 			
 			// Get all link elements
 			if ("nodes".equalsIgnoreCase(property)) {
 				System.out.println("GSNPropertyGetter - invoke function - nodes");
+				// Nodes have non-empty id attributes, find and return them
+				List<Element> result = new ArrayList<Element>();
+				
+				// Root element and it's children
+				if(element.hasChildNodes()) {
+					NodeList childNodes = element.getChildNodes();
+					
+					// Loop over root's child tags
+					for (int i=0; i<childNodes.getLength(); i++) {
+						// Get root's child
+						Object childNode = childNodes.item(i);
+						// Find the given attributeNane in all nodes with loop because NodeList doesn't have find function
+						if (childNode instanceof Element) {
+							// If childNode is an instance of the Element class, cast it to the Element
+							Element e = (Element) childNode;
+							// Node class doesn't have getAttribute function thus casted it to Element
+							if(!e.getAttribute("id").equalsIgnoreCase("")) {
+								// Add all matches into result list
+								result.add(e);
+							}
+						}
+					}
+					return result;
+				}
+				else {
+					return null;
+				}
 			}
 			
 			// Get specific link element by target and source node IDs
