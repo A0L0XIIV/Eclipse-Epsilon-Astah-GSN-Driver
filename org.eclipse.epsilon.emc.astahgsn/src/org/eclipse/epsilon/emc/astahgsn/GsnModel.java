@@ -17,6 +17,7 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import org.eclipse.epsilon.common.util.StringProperties;
 import org.eclipse.epsilon.emc.plainxml.DomUtil;
+import org.eclipse.epsilon.emc.plainxml.PlainXmlType;
 import org.eclipse.epsilon.emc.plainxml.StringInputStream;
 import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
 import org.eclipse.epsilon.eol.exceptions.models.EolEnumerationValueNotFoundException;
@@ -122,11 +123,35 @@ public class GsnModel extends CachedModel<Element> {
 	protected Element createInstanceInModel(String type) throws EolModelElementTypeNotFoundException, EolNotInstantiableModelElementTypeException {
 		System.out.println("GSNModel - createInstanceInModel function");
 		
-		//return createInstance(type, Collections.emptyList());
+		GsnProperty gsnProperty = GsnProperty.parse(type);
 		
-		//HTML MODEL USES
-		//return document.createElement(PlainXmlType.parse(type).getTagName());
-		return document.createElement("argumentElement");
+		if (gsnProperty != null) {
+			Element newElement = null;
+			
+			// Create a root element
+			// GsnType is 'gsn' and document doesn't have any root tag elements
+			if (gsnProperty.isRoot()
+				&& !document.hasChildNodes()) {
+				newElement = document.createElement(ROOT_TAG);
+				document.appendChild(newElement);
+			}
+			// Create a child (argumentElement) tag
+			else {
+				newElement = document.createElement(ELEMENT_TAG);
+				newElement.setAttribute("xsi:type", gsnProperty.getXsiType());
+				newElement.setAttribute("xmi:id", "unique"); // Must be unique value!
+				newElement.setAttribute("id", gsnProperty.getIdPrefix());
+				newElement.setAttribute("content", "");
+				newElement.setAttribute("description", "");
+				createdElements.add(newElement);
+			}
+
+			return newElement;
+		}
+		else {
+			return null;
+		}
+		
 	}
 	
 	@Override
@@ -254,7 +279,7 @@ public class GsnModel extends CachedModel<Element> {
 			return true;
 		}
 		else if(instance instanceof ArrayList
-				&& ((ArrayList) instance).get(0) instanceof Element) {
+				&& ((ArrayList<?>) instance).get(0) instanceof Element) {
 			return true;
 		}
 		else {
@@ -355,7 +380,7 @@ public class GsnModel extends CachedModel<Element> {
 	public boolean hasType(String type) {
 		System.out.println("GSNModel - hasType function, type: " + type);
 		// Only ELEMENT_TYPE and gsn would work
-		return ELEMENT_TYPE.equals(type) || "gsn".equals(type);
+		return ELEMENT_TYPE.equals(type) || type.equalsIgnoreCase("gsn");
 	}
 
 	
