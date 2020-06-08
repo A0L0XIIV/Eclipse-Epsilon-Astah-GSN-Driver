@@ -20,11 +20,6 @@ public class GsnPropertySetter extends JavaPropertySetter {
 	public void invoke(Object target, String property, Object value, IEolContext context) throws EolRuntimeException {
 
 		System.out.println("GSNPropertySetter - invoke function");
-		/*
-		if(target instanceof EolSequence
-			&& ((EolSequence) target).get(0) instanceof Element) {
-			target = ((EolSequence) target).get(0);
-		}*/
 		
 		if (target instanceof Element) synchronized (model) {
 			Element element = (Element) target;
