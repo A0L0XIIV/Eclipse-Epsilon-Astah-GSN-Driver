@@ -30,6 +30,10 @@ Eclipse Epsilon Astah GSN Driver with EMC-XMI integration
 * All links: `gsn.links` --> *Returns all link elements*
 * All nodes: `gsn.nodes` --> *Returns all node elements*
 * Get specific link element: `gsn.t_G3_s_J4` --> *Returns link element with target: G3 and sourceL J4*
+* Get first or last element: `gsn.all.last, gsn.solution.first` --> Returns last element of the GSN and the second one returns first goal element
+* Both last and first methods are right and returns same results:
+⋅⋅* `gsn.goal.last.content.println();` --> *Returns last goal element's content*
+⋅⋅* `gsn.goal.content.last.println();` --> *Returns goal content sequence's (list) last content*
 * `PRINTING: gsn.C5.content.println():`
 
 ## Setter Examples
@@ -38,3 +42,14 @@ Eclipse Epsilon Astah GSN Driver with EMC-XMI integration
 * Set link element's source: `gsn.t_A12_s_G7.source = gsn.Sn7;`
 * Set link element's target: `gsn.t_A12_s_G7.target = gsn.Sn7;`
 * Set element's (node) gsn type: `gsn.S9.gsntype = "goal";` --> *Changes element's type and assigns new id (last/highest)*
+
+## Creating new Element
+
+* Create a new goal element: `var newElement = new n_goal;`
+* Setting up the new element: `gsn.goal.last.content = "New Goal Element Content"`
+* `New Nodes:` **n_goal, n_strategy, n_solution, n_context, n_assumption, n_justification**
+* `New Links:` **l_inference, l_evidence, l_context**
+
+## Deleting an Element
+
+* Not implemented yet!
