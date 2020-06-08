@@ -72,6 +72,23 @@ public class GsnPropertySetter extends JavaPropertySetter {
 				return;
 			}
 			
+			// Append argumentElement into root element tag
+			if("append".equals(property) && value instanceof Element && ((Element) target).hasChildNodes()) {
+				Element newElement = (Element) value;
+				String newElementId = newElement.getAttribute("id");
+				
+				// Check new element's id attribute. If it doesn't have any digit, assign a new id number
+				if(newElementId != "" && !hasDigit(newElementId)) {
+					// Parse id to find element's type
+					GsnProperty g = GsnProperty.parse(newElementId);
+					// Get element's type highest id number and +1 it
+					int newIdNumber = getTypesHighestIdNumber(g.getType().toString(), (Element) target) + 1;
+					// Assign new id to the newElement
+					newElement.setAttribute("id", newElementId + newIdNumber);
+				}
+				
+			}
+			
 			return;
 			
 		}
@@ -111,5 +128,14 @@ public class GsnPropertySetter extends JavaPropertySetter {
 			return maxId;
 		}
 		return 0;	
+	}
+	
+	public boolean hasDigit(String input) {
+	    for (int i = 0; i < input.length(); ++i) {
+	        if (Character.isDigit(input.charAt(i))) {
+	        	return true;
+	        }
+	    }
+	    return false;
 	}
 }

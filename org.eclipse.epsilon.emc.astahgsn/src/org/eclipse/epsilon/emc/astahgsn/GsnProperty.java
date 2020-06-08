@@ -17,6 +17,7 @@ public class GsnProperty {
 	protected String property;
 	protected boolean isNode = false;
 	protected boolean isLink = false;
+	protected boolean isRoot = false;
 	
 	public static GsnProperty parse(String property) {
 		GsnProperty p = new GsnProperty();
@@ -88,6 +89,9 @@ public class GsnProperty {
 			p.xsiType = "ARM:AssertedContext";
 			p.isLink = true;
 			break;
+		// Root tag element
+		case "gsn":
+			p.isRoot = true;
 		default:
 			p = null;
 			break;
@@ -123,6 +127,10 @@ public class GsnProperty {
 	
 	public boolean isLink() {
 		return isLink;
+	}
+	
+	public boolean isRoot() {
+		return isRoot;
 	}
 	
 }
