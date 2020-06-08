@@ -69,21 +69,45 @@ public class GsnPropertyGetter extends JavaPropertyGetter {
 			// Get link's target element
 			if ("target".equalsIgnoreCase(property)) {
 				System.out.println("GSNPropertyGetter - invoke function - target");
-				// Get element's target value and find it in other tags
-				String targetId = element.getAttribute("xmi:id");
 				
-				// Element is child node, call findElementByAttribute with root node in order to find another child
-				return findElementByAttribute(element.getParentNode(), "target", targetId);				
+				// Element is node or link, if element has target attribute = it's a link
+				if(element.hasAttribute("target")) {
+					// Get link element's target value and find the node element with xmi:id = targetId 
+					String targetId = element.getAttribute("target");
+
+					// Element is child node, call findElementByAttribute with root node in order to find another child
+					return findElementByAttribute(element.getParentNode(), "xmi:id", targetId);	
+				}
+				// Element is a node
+				else {
+					// Get node element's xmi:id value and find all link elements with target = targetId
+					String targetId = element.getAttribute("xmi:id");
+					
+					// Element is child node, call findElementByAttribute with root node in order to find another child
+					return findElementByAttribute(element.getParentNode(), "target", targetId);		
+				}		
 			}
 			
 			// Get link's source element
 			if ("source".equalsIgnoreCase(property)) {
 				System.out.println("GSNPropertyGetter - invoke function - source");
-				// Get element's source value and find it in other tags
-				String sourceId= element.getAttribute("xmi:id");
+				
+				// Element is node or link, if element has source attribute = it's a link
+				if(element.hasAttribute("source")) {	
+					// Get element's source value and find the node element with xmi:id = sourceId 
+					String sourceId= element.getAttribute("source");
 
-				// Element is child node, call findElementByAttribute with root node in order to find another child
-				return findElementByAttribute(element.getParentNode(), "source", sourceId);
+					// Element is child node, call findElementByAttribute with root node in order to find another child
+					return findElementByAttribute(element.getParentNode(), "xmi:id", sourceId);
+				}
+				// Element is a node
+				else {	
+					// Get node element's xmi:id value and find all link elements with source = sourceId
+					String sourceId= element.getAttribute("xmi:id");
+
+					// Element is child node, call findElementByAttribute with root node in order to find another child
+					return findElementByAttribute(element.getParentNode(), "source", sourceId);	
+				}
 			}
 			
 			// Get node's content
