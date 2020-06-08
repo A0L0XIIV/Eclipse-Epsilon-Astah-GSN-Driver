@@ -32,8 +32,8 @@ Eclipse Epsilon Astah GSN Driver with EMC-XMI integration
 * Get specific link element: `gsn.t_G3_s_J4` --> *Returns link element with target: G3 and sourceL J4*
 * Get first or last element: `gsn.all.last, gsn.solution.first` --> Returns last element of the GSN and the second one returns first goal element
 * Both last and first methods are right and returns same results:
-⋅⋅* `gsn.goal.last.content.println();` --> *Returns last goal element's content*
-⋅⋅* `gsn.goal.content.last.println();` --> *Returns goal content sequence's (list) last content*
+  * `gsn.goal.last.content.println();` --> *Returns last goal element's content*
+  * `gsn.goal.content.last.println();` --> *Returns goal content sequence's (list) last content*
 * `PRINTING: gsn.C5.content.println():`
 
 ## Setter Examples
