@@ -25,7 +25,8 @@ public class GsnPropertyGetter extends JavaPropertyGetter {
 		if (object instanceof Element
 			|| object instanceof EolModelElementType
 			&& ((EolModelElementType) object).isInstantiable()
-			&& ((EolModelElementType) object).getTypeName().equalsIgnoreCase("gsn")) synchronized (model) {
+			&& ((EolModelElementType) object).getTypeName().equalsIgnoreCase("gsn")
+			|| object instanceof ArrayList) synchronized (model) {
 				
 			// Get all elements (gsn.all)
 			if ("all".equals(property)) {
@@ -49,6 +50,19 @@ public class GsnPropertyGetter extends JavaPropertyGetter {
 				System.out.println("GSNPropertyGetter - invoke function - GSN ID");
 				// Get first element of the model which is root tag (It includes child tags)
 				object = ((EolModelElementType) object).getAll().toArray()[0];
+			}
+			
+			// gsn.goal.last or gsn.solution.first return ArrayList because, they are subset of the Root Element 
+			// However gsn.all.last doesn't return ArrayList, it returns Root Tag element
+			if(object instanceof ArrayList
+				&& ((ArrayList<?>) object).get(0) instanceof Element) {
+				ArrayList<Element> list = (ArrayList<Element>) object;
+				if("last".equals(property)) {
+					return list.get(list.size() - 1);
+				}
+				else if("first".equals(property)) {
+					return list.get(0);
+				}
 			}
 				
 			Element element = (Element) object;
@@ -179,6 +193,27 @@ public class GsnPropertyGetter extends JavaPropertyGetter {
 		        else {
 		        	return null;
 		        }
+			}
+			
+			
+			// Get last element, useful for new elements
+			if("last".equalsIgnoreCase(property) && element.hasChildNodes()) {
+				Node lastChild = element.getLastChild();
+				// If the last child is NOT an Element instance, get the previous one
+				while(! (lastChild instanceof Element)) {
+					lastChild = lastChild.getPreviousSibling();
+				}
+				return lastChild;
+			}
+			
+			// Get first element
+			if("first".equalsIgnoreCase(property) && element.hasChildNodes()) {
+				Node firstChild = element.getFirstChild();
+				// If the first child is NOT an Element instance, get the next one
+				while(! (firstChild instanceof Element)) {
+					firstChild = firstChild.getNextSibling();
+				}
+				return firstChild;
 			}
 			
 			
