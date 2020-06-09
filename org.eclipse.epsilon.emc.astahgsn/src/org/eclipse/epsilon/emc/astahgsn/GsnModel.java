@@ -139,7 +139,7 @@ public class GsnModel extends CachedModel<Element> {
 			else {
 				newElement = document.createElement(ELEMENT_TAG);
 				newElement.setAttribute("xsi:type", gsnProperty.getXsiType());
-				newElement.setAttribute("xmi:id", "unique"); // Must be unique value!
+				newElement.setAttribute("xmi:id", gsnProperty.getIdPrefix() + "MustBeUnique"); // Must be unique value!
 				newElement.setAttribute("id", gsnProperty.getIdPrefix());
 				newElement.setAttribute("content", "");
 				newElement.setAttribute("description", "");
@@ -380,7 +380,7 @@ public class GsnModel extends CachedModel<Element> {
 	public boolean hasType(String type) {
 		System.out.println("GSNModel - hasType function, type: " + type);
 		// Only ELEMENT_TYPE and gsn would work
-		return ELEMENT_TYPE.equals(type) || type.equalsIgnoreCase("gsn");
+		return ELEMENT_TYPE.equals(type) || (GsnProperty.parse(type) != null);
 	}
 
 	
