@@ -92,6 +92,7 @@ public class GsnProperty {
 		// Root tag element
 		case "gsn":
 			p.isRoot = true;
+			break;
 		default:
 			p = null;
 			break;
