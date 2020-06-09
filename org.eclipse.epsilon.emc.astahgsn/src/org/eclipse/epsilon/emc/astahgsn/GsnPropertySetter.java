@@ -33,6 +33,30 @@ public class GsnPropertySetter extends JavaPropertySetter {
 				return;
 			}
 			
+			// Set element's id
+			if("id".equalsIgnoreCase(property)) {
+				System.out.println("GSNPropertySetter - invoke function - id");
+				
+				element.setAttribute("id", String.valueOf(value) + "");
+				return;
+			}
+			
+			// Set element's xmi:id
+			if("xmiid".equalsIgnoreCase(property) || "xmi_id".equalsIgnoreCase(property)) {
+				System.out.println("GSNPropertySetter - invoke function - xmi:id");
+				
+				element.setAttribute("xmi:id", String.valueOf(value) + "");
+				return;
+			}
+			
+			// Set element's xsi:type
+			if("xsitype".equalsIgnoreCase(property) || "xsi_type".equalsIgnoreCase(property)) {
+				System.out.println("GSNPropertySetter - invoke function - xsi:type");
+				
+				element.setAttribute("xsi:type", String.valueOf(value) + "");
+				return;
+			}
+			
 			// Set link's source
 			if("source".equalsIgnoreCase(property) && value instanceof Element) {
 				System.out.println("GSNPropertySetter - invoke function - source");
@@ -87,6 +111,10 @@ public class GsnPropertySetter extends JavaPropertySetter {
 					newElement.setAttribute("id", newElementId + newIdNumber);
 				}
 				
+				// Append new element into Root element
+				((Element) target).appendChild(newElement);
+				
+				return;
 			}
 			
 			return;
