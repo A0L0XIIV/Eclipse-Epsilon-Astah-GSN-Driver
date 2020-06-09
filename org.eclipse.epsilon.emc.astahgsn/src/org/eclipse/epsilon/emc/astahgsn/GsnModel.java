@@ -167,7 +167,7 @@ public class GsnModel extends CachedModel<Element> {
 		}
 		createdElements.remove(e);
 		
-		// Also remove all its children
+		// Also remove all its children = For Root element
 		for (Element child : DomUtil.getChildren(e)) {
 			deleteElement(child);
 		}
@@ -249,7 +249,7 @@ public class GsnModel extends CachedModel<Element> {
 	@Override
 	public boolean owns(Object instance) {
 		
-		// Element owner check [argumentElement]
+		// Element owner check [argumentElement] or Root element
 		if (instance instanceof Element) synchronized (this) {
 			Element e = (Element) instance;
 			
@@ -273,11 +273,12 @@ public class GsnModel extends CachedModel<Element> {
 				return parent == document || createdElements.contains(parent);
 			}
 		}
-		// Initial model check, (gsn.all, gsn.G1, ...)
+		// Initial model check, e.g. gsn.all, gsn.G1, ...
 		else if(instance instanceof EolModelElementType
 				&& ((EolModelElementType) instance).getTypeName().equalsIgnoreCase("gsn")){
 			return true;
 		}
+		// For queries that return ArrayList, e.g. gsn.goal
 		else if(instance instanceof ArrayList
 				&& ((ArrayList<?>) instance).get(0) instanceof Element) {
 			return true;
