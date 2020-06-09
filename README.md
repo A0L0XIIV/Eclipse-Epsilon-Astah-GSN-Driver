@@ -16,15 +16,21 @@ Eclipse Epsilon Astah GSN Driver with EMC-XMI integration
 * Start a nested Eclipse instance by selecting the `org.eclipse.epsilon.emc.astahgsn project` and clicking `Run As -> Eclipse Application`
 * This step is the same as [Epsilon EMC-HTML Integration](https://github.com/epsilonlabs/emc-html)
 
+## Element Types
+
+* `Node Types:` **goal, strategy, solution, context, assumption, justification**
+* `Link Types:` **inference (or assertedinference), evidence (or assertedevidence), assertedcontext**
+* These types are same for getters, setters and new element creator
+
 ## Getter Examples
 
 * All elements: `gsn.all` --> *For accessing all GSN elements*
 * Specific type: `gsn.goal` --> *Returns all goal elements*
-* `Node Types:` **goal, strategy, solution, context, assumption, justification**
-* `Link Types:` **inference (or assertedinference), evidence (or assertedevidence), assertedcontext**
 * Element by ID: `gsn.G1` --> *Returns G1 goal element*
 * Element content: `gsn.G1.content` --> *Returns G1's content*
 * Element type: `gsn.G1.gsntype` --> *Returns G1's type (Goal)*
+* Element xmi:id: `gsn.G1.xmiid OR gsn.G1.xmi_id` --> *Returns G1's xmi:id attribute. It's unique for every element*
+* Element xsi:type: `gsn.G1.xsitype OR gsn.g1.xsi_type` --> *Returns G1's xsi:type attribute (ARM:Claim)*
 * Element (node) links: `gsn.G1.target, gsn.G1.source` --> *Returns G1 element's all targeted or sourced link elements*
 * Element ID: `gsn.G1.id` --> *Returns G1's id (G1)*
 * All links: `gsn.links` --> *Returns all link elements*
@@ -39,16 +45,23 @@ Eclipse Epsilon Astah GSN Driver with EMC-XMI integration
 ## Setter Examples
 
 * Set element (node) content: `gsn.Sn5.content = "Example";`
+* Set element id: `gsn.Sn5.id = "Sn14";` --> *MUST BE UNIQUE*
+* Set element xmi:id: `gsn.Sn5.xmiid = "_fvLpH5q4Eeqyz11T9RpXrQ";` --> *MUST BE UNIQUE*
+* Set element xsi:type: `gsn.Sn5.xsitpye = "ARM:ArgumentReasoning";` --> *MUSTMATCH THE ID TYPE*
 * Set link element's source: `gsn.t_A12_s_G7.source = gsn.Sn7;`
 * Set link element's target: `gsn.t_A12_s_G7.target = gsn.Sn7;`
 * Set element's (node) gsn type: `gsn.S9.gsntype = "goal";` --> *Changes element's type and assigns new id (last/highest)*
 
-## Creating new Element
+## Creating a New Element
 
-* Create a new goal element: `var newElement = new n_goal;`
-* Setting up the new element: `gsn.goal.last.content = "New Goal Element Content"`
-* `New Nodes:` **n_goal, n_strategy, n_solution, n_context, n_assumption, n_justification**
-* `New Links:` **l_inference, l_evidence, l_context**
+* Unless you know what are you doing, I do NOT recomend creating a new element vie Epsilon. Because every element requires UNIQUE xmi:id value and Astah GSN generates these IDs with location and document values. This driver cannot create unique ID's for new elements, therefore; creating a new element via Epsilon might cause ERRORS in Astah GSN scheme or model.
+* Element creater generates 'argumentElement' tag with given type xsi:type, xmi:id (Type prefix + MustBeUnique, e.g. GMustBeUnique), id (type prefix, e.g. G) and empty content, description attributes. User has to update xmi:id attribute according to other elements' xmi:ids.
+* Create a new goal element: `var newElement = new goal;`
+* Setting up the new element attributes: `newElement.content = "New Goal Element Content"`
+* Appeding new element into model: `gsn.all.append = newElement;` --> *If new element's id attribute doens't have any digits (e.g. G), driver will automatically assign new ID number to the new element. This ID number is going to be the last id + 1 (e.g. G20, new ID = G21)*
+* Updating the new element: `gsn.goal.last.content = "New Goal Element Content!"`
+* OR get the last element: `gsn.all.last.content = "New Goal Element Content!"`
+* OR get new element's ID and use it update element: `gsn.all.last.id.println();`
 
 ## Deleting an Element
 
