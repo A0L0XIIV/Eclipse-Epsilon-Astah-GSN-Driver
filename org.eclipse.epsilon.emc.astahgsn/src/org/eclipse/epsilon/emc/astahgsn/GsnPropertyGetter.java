@@ -129,9 +129,19 @@ public class GsnPropertyGetter extends JavaPropertyGetter {
 				return getElementAttribute(element, "content");
 			}
 			
-			// Get node's links
+			// Get element's id
 			if("id".equalsIgnoreCase(property)) {
 				return getElementAttribute(element, "id");
+			}
+			
+			// Get element's xmi:id
+			if("xmiid".equalsIgnoreCase(property) || "xmi_id".equalsIgnoreCase(property)) {
+				return getElementAttribute(element, "xmi:id");
+			}
+			
+			// Get element's xsi:type
+			if("xsitype".equalsIgnoreCase(property) || "xsi_type".equalsIgnoreCase(property)) {
+				return getElementAttribute(element, "xsi:type");
 			}
 			
 			// Get all link elements
