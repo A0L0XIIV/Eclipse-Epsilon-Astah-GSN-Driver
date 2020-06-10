@@ -23,7 +23,9 @@ Eclipse Epsilon Astah GSN Driver with EMC-XMI integration
 * `Link Types:` **inference (or assertedinference), evidence (or assertedevidence), assertedcontext**
 * These types are same for getters, setters, and new element creator
 
-## Getter Examples
+## EOL Examples (Epsilon Object Language)
+
+### Getter Examples
 
 * All elements: `gsn.all` --> *For accessing all GSN elements*
 * Specific type: `gsn.goal` --> *Returns all goal elements*
@@ -43,7 +45,7 @@ Eclipse Epsilon Astah GSN Driver with EMC-XMI integration
   * `gsn.goal.content.last.println();` --> *Returns goal content sequence's (list) last content*
 * `PRINTING: gsn.C5.content.println():`
 
-## Setter Examples
+### Setter Examples
 
 * Set element (node) content: `gsn.Sn5.content = "Example";`
 * Set element id: `gsn.Sn5.id = "Sn14";` --> *MUST BE UNIQUE*
@@ -53,7 +55,7 @@ Eclipse Epsilon Astah GSN Driver with EMC-XMI integration
 * Set link element's target: `gsn.t_A12_s_G7.target = gsn.Sn7;`
 * Set element's (node) gsn type: `gsn.S9.gsntype = "goal";` --> *Changes element's type and assigns new id (last/highest)*
 
-## Creating a New Element
+### Creating a New Element
 
 * Unless you know what are you doing, I do NOT recommend creating a new element via Epsilon. Because every element requires UNIQUE xmi:id value and Astah GSN generates these IDs with location and document values. This driver cannot create unique ID's for new elements; therefore, creating a new element via Epsilon might cause ERRORS in Astah GSN scheme or model.
 * Element creater generates 'argumentElement' tag with given type xsi:type, xmi:id (Type prefix + MustBeUnique, e.g. GMustBeUnique), id (type prefix, e.g. G) and empty content, description attributes. User has to update xmi:id attribute according to other elements' xmi:ids.
@@ -64,11 +66,11 @@ Eclipse Epsilon Astah GSN Driver with EMC-XMI integration
 * OR get the last element: `gsn.all.last.content = "New Goal Element Content!"`
 * OR get new element's ID and use it update element: `gsn.all.last.id.println();`
 
-## Deleting an Element
+### Deleting an Element
 
 * Deleting an element: `delete gsn.G10;`
 
-## EVL Exampls (Epsilon Validation Language)
+## EVL Examples (Epsilon Validation Language)
 
 ```
 context gsn {
@@ -86,16 +88,16 @@ context goal {
 }
 ```
 
-## EGL Exampls (Epsilon Code Generation Language)
+## EGL Examples (Epsilon Code Generation Language)
 
 * EGX script to run EGL:
 ```
 pre { "Transformation starting".println(); }
 rule AstahGSN2HTML
 	transform gsn : GSN {
-	template : "YourEGLFileName.egl"
-	target : "output.html"
-}
+		template : "YourEGLFileName.egl"
+		target : "output.html"
+	}
 post { "Transformation finished".println(); }
 ```
 
