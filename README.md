@@ -105,7 +105,7 @@ post { "Transformation finished".println(); }
 ```
 <table border="1">
 	<tr><td>Goal ID</td><td>Content</td></tr>
-	[%for (g in gsn.goal){%]
+	[%for (g in gsn.goal.sortBy(g|g.id)){%]
 	<tr>
 		<td>[%=g.id%]</td>
 		<td>[%=g.content%]</td>
