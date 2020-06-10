@@ -7,7 +7,7 @@ Eclipse Epsilon Astah GSN Driver with EMC-XMI integration
 * Only works with Astah GSN models
 * Use Astah GSN XMI export tool to get XMI version of the models
 * Only works with `XMI` files, not `AGML` files
-* This Epsilon EMC integration driver is a heavily modified version of [Epsilon PlainXML Driver](https://www.eclipse.org/epsilon/doc/articles/plain-xml/).
+* This Epsilon EMC integration driver is a heavily modified version of [Epsilon Plain-XML Driver](https://www.eclipse.org/epsilon/doc/articles/plain-xml/).
 
 ## How to Run
 * Install the latest interim version of Epsilon or clone its Eclipse Epsilon Git repo and import all projects under /plugins to your Eclipse workspace
@@ -67,3 +67,21 @@ Eclipse Epsilon Astah GSN Driver with EMC-XMI integration
 ## Deleting an Element
 
 * Deleting an element: `delete gsn.G10;`
+
+## EVL Exampls (Epsilon Validation Language)
+
+```
+context gsn {
+	constraint Example1 {
+		check: self.g1.target.size() == 2
+		message: "Goal " + self.g1.id + " must have exactly 2 outgoing targets!"
+	}
+}
+
+context goal {
+	constraint Example2 {
+		check: not self.content.contains("")
+		message: "Goals must have non-empty content!"
+	}
+}
+```
