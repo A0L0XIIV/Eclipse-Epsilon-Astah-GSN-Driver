@@ -85,3 +85,29 @@ context goal {
 	}
 }
 ```
+
+## EGL Exampls (Epsilon Code Generation Language)
+
+* EGX script to run EGL:
+```
+pre { "Transformation starting".println(); }
+rule AstahGSN2HTML
+	transform gsn : GSN {
+	template : "YourEGLFileName.egl"
+	target : "output.html"
+}
+post { "Transformation finished".println(); }
+```
+
+* EGL code for generating Goal HTML tables:
+```
+<table border="1">
+	<tr><td>Goal ID</td><td>Content</td></tr>
+	[%for (g in gsn.goal){%]
+	<tr>
+		<td>[%=g.id%]</td>
+		<td>[%=g.content%]</td>
+	</tr>
+	[%}%]
+</table>
+```
