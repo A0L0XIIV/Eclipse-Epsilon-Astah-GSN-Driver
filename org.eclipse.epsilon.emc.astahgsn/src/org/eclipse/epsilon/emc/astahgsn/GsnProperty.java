@@ -25,6 +25,10 @@ public class GsnProperty {
 		// ID: Remove digits & lower case --> G1 turn into g, Sn13 turns into sn
 		// Type: lower case --> goal, context, ...
 		switch(property.replaceAll("([0-9])", "").toLowerCase()) {
+		// Root tag element
+		case "gsn":
+			p.isRoot = true;
+			break;
 		// Nodes
 		case "g":
 		case "goal":
@@ -88,10 +92,6 @@ public class GsnProperty {
 			p.idPrefix = "";
 			p.xsiType = "ARM:AssertedContext";
 			p.isLink = true;
-			break;
-		// Root tag element
-		case "gsn":
-			p.isRoot = true;
 			break;
 		default:
 			p = null;
