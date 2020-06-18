@@ -71,13 +71,30 @@ public class GsnPropertyGetter extends JavaPropertyGetter {
 			// Get element's type: goal, solution, evidence, ...
 			if ("gsntype".equals(property)) {
 				System.out.println("GSNPropertyGetter - invoke function - type");
-				// Get element's gsn property type
-				GsnProperty g = GsnProperty.parse(element.getAttribute("id"));
-				// Return it's type
-				if(g != null)
-					return g.getType().toString();
-				else
-					return null;
+				// Get element's id
+				String elementId = element.getAttribute("id");
+				// ID isn't empty ==> node element, returns its type
+				if(elementId != "") {
+					// Get element's gsn property type
+					GsnProperty g = GsnProperty.parse(elementId);
+					// Return it's type
+					if(g != null)
+						return g.getType().toString();
+					else
+						return null;
+				}
+				// ID is empty ==> link element, find type by xsi:type
+				else{
+					// Get link's xsi:type, split it from ':' and get second part
+					String elementXsiType = element.getAttribute("xsi:type").split(":")[1];
+					// Get element's gsn property type
+					GsnProperty g = GsnProperty.parse(elementXsiType);
+					// Return it's type
+					if(g != null)
+						return g.getType().toString();
+					else
+						return null;
+				}
 			}
 			
 			// Get link's target element
