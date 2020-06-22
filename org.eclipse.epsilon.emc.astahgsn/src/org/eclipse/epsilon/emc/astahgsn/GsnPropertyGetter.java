@@ -103,19 +103,29 @@ public class GsnPropertyGetter extends JavaPropertyGetter {
 				
 				// Element is node or link, if element has target attribute = it's a link
 				if(element.hasAttribute("target")) {
-					// Get link element's target value and find the node element with xmi:id = targetId 
-					String targetId = element.getAttribute("target");
+					// Get link element's SOURCE* value and find the node element with xmi:id = targetId 
+					/* WARNING: Astah-GSN has reversed source/target attributes for link elements in XMI file.
+					* That means link's source attribute stores the targeted (the end of the arrow) node element's xmi:id
+					* same for link's target attribute stores the sourced (the beginning of the arrow) node element's xmi:id
+					* .target gets element's 'source' attribute and .source gets element's 'target' attribute for easy understanding
+					*/
+					String targetId = element.getAttribute("source");
 
 					// Element is child node, call findElementByAttribute with root node in order to find another child
 					return findElementByAttribute(element.getParentNode(), "xmi:id", targetId);	
 				}
 				// Element is a node
 				else {
-					// Get node element's xmi:id value and find all link elements with target = targetId
+					// Get node element's xmi:id value and find all link elements that targets the given node element
 					String targetId = element.getAttribute("xmi:id");
 					
-					// Element is child node, call findElementByAttribute with root node in order to find another child
-					return findElementByAttribute(element.getParentNode(), "target", targetId);		
+					// findElementByAttribute with root node returns all link elements with SOURCE* = targetId
+					/* WARNING: Astah-GSN has reversed source/target attributes for link elements in XMI file.
+					* That means link's source attribute stores the targeted (the end of the arrow) node element's xmi:id
+					* same for link's target attribute stores the sourced (the beginning of the arrow) node element's xmi:id
+					* .target gets element's 'source' attribute and .source gets element's 'target' attribute for easy understanding
+					*/
+					return findElementByAttribute(element.getParentNode(), "source", targetId);		
 				}		
 			}
 			
@@ -125,19 +135,29 @@ public class GsnPropertyGetter extends JavaPropertyGetter {
 				
 				// Element is node or link, if element has source attribute = it's a link
 				if(element.hasAttribute("source")) {	
-					// Get element's source value and find the node element with xmi:id = sourceId 
-					String sourceId= element.getAttribute("source");
+					// Get element's TARGET* value and find the node element with xmi:id = sourceId
+					/* WARNING: Astah-GSN has reversed source/target attributes for link elements in XMI file.
+					* That means link's source attribute stores the targeted (the end of the arrow) node element's xmi:id
+					* same for link's target attribute stores the sourced (the beginning of the arrow) node element's xmi:id
+					* .target gets element's 'source' attribute and .source gets element's 'target' attribute for easy understanding
+					*/
+					String sourceId= element.getAttribute("target");
 
 					// Element is child node, call findElementByAttribute with root node in order to find another child
 					return findElementByAttribute(element.getParentNode(), "xmi:id", sourceId);
 				}
 				// Element is a node
 				else {	
-					// Get node element's xmi:id value and find all link elements with source = sourceId
+					// Get node element's xmi:id value and find all link elements that starts from the given node element
 					String sourceId= element.getAttribute("xmi:id");
 
-					// Element is child node, call findElementByAttribute with root node in order to find another child
-					return findElementByAttribute(element.getParentNode(), "source", sourceId);	
+					// findElementByAttribute with root node returns all link elements with TARGET* = sourceId
+					/* WARNING: Astah-GSN has reversed source/target attributes for link elements in XMI file.
+					* That means link's source attribute stores the targeted (the end of the arrow) node element's xmi:id
+					* same for link's target attribute stores the sourced (the beginning of the arrow) node element's xmi:id
+					* .target gets element's 'source' attribute and .source gets element's 'target' attribute for easy understanding
+					*/
+					return findElementByAttribute(element.getParentNode(), "target", sourceId);	
 				}
 			}
 			
@@ -170,7 +190,7 @@ public class GsnPropertyGetter extends JavaPropertyGetter {
 				return findElementByAttribute(element, "id", "");
 			}
 			
-			// Get all link elements
+			// Get all node elements
 			if ("nodes".equalsIgnoreCase(property)) {
 				System.out.println("GSNPropertyGetter - invoke function - nodes");
 				// Nodes have non-empty id attributes, find and return them
@@ -364,14 +384,19 @@ public class GsnPropertyGetter extends JavaPropertyGetter {
 			for (int i=0; i<childNodes.getLength(); i++) {
 				// Get root's child
 				Object childNode = childNodes.item(i);
-				// Find the given attributeNane in all nodes with loop because NodeList doesn't have find function
+				// If childNode is an instance of the Element class, cast it to the Element
 				if (childNode instanceof Element) {
-					// If childNode is an instance of the Element class, cast it to the Element
-					Element e = (Element) childNode;
 					// Node class doesn't have getAttribute function thus casted it to Element
-					if(e.getAttribute("target").equalsIgnoreCase(targetXmiId)
-						&& e.getAttribute("source").equalsIgnoreCase(sourceXmiId)) {
-						// Found link element with given target and source xmi IDs
+					Element e = (Element) childNode;
+					// If link element's SOURCE* attribute equals to targetXmiId and TARGET* equals to sourceXmiId
+					/* WARNING: Astah-GSN has reversed source/target attributes for link elements in XMI file.
+					* That means link's source attribute stores the targeted (the end of the arrow) node element's xmi:id
+					* same for link's target attribute stores the sourced (the beginning of the arrow) node element's xmi:id
+					* That's why target and source attribute getters are reversed in the code below (for better usability)
+					*/
+					if(e.getAttribute("source").equalsIgnoreCase(targetXmiId)
+						&& e.getAttribute("target").equalsIgnoreCase(sourceXmiId)) {
+						// Found link element with given target and source xmi:IDs
 						return e;
 					}
 				}

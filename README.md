@@ -34,11 +34,16 @@ Eclipse Epsilon Astah GSN Driver with EMC-XMI integration
 * Element type: `gsn.G1.gsntype` --> *Returns G1's type (Goal)*
 * Element xmi:id : `gsn.G1.xmiid` OR `gsn.G1.xmi_id` --> *Returns G1's xmi:id attribute. It's unique for every element*
 * Element xsi:type: `gsn.G1.xsitype` OR `gsn.g1.xsi_type` --> *Returns G1's xsi:type attribute (ARM:Claim)*
-* Element (node) links: `gsn.G1.target, gsn.G1.source` --> *Returns G1 element's all targeted or sourced link elements*
 * Element ID: `gsn.G1.id` --> *Returns G1's id (G1)*
 * All links: `gsn.links` --> *Returns all link elements*
 * All nodes: `gsn.nodes` --> *Returns all node elements*
 * Get specific link element: `gsn.t_G3_s_J4` --> *Returns link element with target: G3 and sourceL J4*
+* Target/Source for link elements:
+  * `gsn.t_G3_s_J4.target` --> *Returns the node element targeted by the given link element (G3)*
+  * `gsn.t_G3_s_J4.source` --> *Returns the given link element's source node (J4)*
+* Target/Source for node elements:
+  * `gsn.G1.target` --> *Returns all link elements ending in G1*
+  * `gsn.G1.source` --> *Returns all link elements starting from G1*
 * Get first or last element: `gsn.all.last, gsn.solution.first` --> Returns last element of the GSN and the second one returns first goal element
 * Both last and first methods are right and returns same results:
   * `gsn.goal.last.content.println();` --> *Returns last goal element's content*

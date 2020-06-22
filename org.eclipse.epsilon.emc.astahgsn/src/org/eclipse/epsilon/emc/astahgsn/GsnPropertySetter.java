@@ -62,8 +62,13 @@ public class GsnPropertySetter extends JavaPropertySetter {
 				System.out.println("GSNPropertySetter - invoke function - source");
 				
 				Element sourceElement = (Element) value;
-				// Get value's xmi:id and set it to element's source attribute
-				element.setAttribute("source", sourceElement.getAttribute("xmi:id"));
+				// Get value's xmi:id and set it to element's TARGET* attribute
+				/* WARNING: Astah-GSN has reversed source/target attributes for link elements in XMI file.
+				* That means link's source attribute stores the targeted (the end of the arrow) node element's xmi:id
+				* same for link's target attribute stores the sourced (the beginning of the arrow) node element's xmi:id
+				* .target sets element's 'source' attribute and .source sets element's 'target' attribute for easy understanding
+				*/
+				element.setAttribute("target", sourceElement.getAttribute("xmi:id"));
 				return;
 			}
 			
@@ -72,8 +77,13 @@ public class GsnPropertySetter extends JavaPropertySetter {
 				System.out.println("GSNPropertySetter - invoke function - target");
 				
 				Element targetElement = (Element) value;
-				// Get value's xmi:id and set it to element's target attribute
-				element.setAttribute("target", targetElement.getAttribute("xmi:id"));
+				// Get value's xmi:id and set it to element's SOURCE* attribute
+				/* WARNING: Astah-GSN has reversed source/target attributes for link elements in XMI file.
+				* That means link's source attribute stores the targeted (the end of the arrow) node element's xmi:id
+				* same for link's target attribute stores the sourced (the beginning of the arrow) node element's xmi:id
+				* .target sets element's 'source' attribute and .source sets element's 'target' attribute for easy understanding
+				*/
+				element.setAttribute("source", targetElement.getAttribute("xmi:id"));
 				return;
 			}
 			
