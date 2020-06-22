@@ -242,6 +242,26 @@ public class GsnPropertyGetter extends JavaPropertyGetter {
 		        }
 			}
 			
+			// Get specific link element by target and source node IDs V2
+			if(property.startsWith("s_")) {
+				// Example s_G2_t_S3
+				// Parse property string for target and source node IDs
+		        String sourceId = property.substring(2, property.indexOf("_t_"));
+		        String targetId = property.substring(property.indexOf("_t_") + 3);
+		        
+		        // Found target and source nodes with parsed Ids
+		        Object target = findElementByAttribute(element, "id", targetId);
+		        Object source = findElementByAttribute(element, "id", sourceId);
+		        
+		        // If nodes aren't empty, find link element
+		        if(target != null && source != null) {
+		        	return findLinkByNodeIDs(element, ((Element) target).getAttribute("xmi:id"), ((Element) source).getAttribute("xmi:id"));
+		        }
+		        else {
+		        	return null;
+		        }
+			}
+			
 			
 			// Get last element, useful for new elements
 			if("last".equalsIgnoreCase(property) && element.hasChildNodes()) {
