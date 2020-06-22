@@ -224,7 +224,7 @@ public class GsnPropertyGetter extends JavaPropertyGetter {
 			
 			// Get specific link element by target and source node IDs
 			if(property.startsWith("t_")) {
-				// Example t_G2_s_S3
+				// Example t_G2_s_G3
 				// Parse property string for target and source node IDs
 		        String targetId = property.substring(2, property.indexOf("_s_"));
 		        String sourceId = property.substring(property.indexOf("_s_") + 3);
