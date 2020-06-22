@@ -37,7 +37,7 @@ Eclipse Epsilon Astah GSN Driver with EMC-XMI integration
 * Element ID: `gsn.G1.id` --> *Returns G1's id (G1)*
 * All links: `gsn.links` --> *Returns all link elements*
 * All nodes: `gsn.nodes` --> *Returns all node elements*
-* Get specific link element: `gsn.t_G3_s_J4` --> *Returns link element with target: G3 and sourceL J4*
+* Get specific link element: `gsn.t_G3_s_J4` --> *Returns link element with target: G3 and source: J4*
 * Target/Source for link elements:
   * `gsn.t_G3_s_J4.target` --> *Returns the node element targeted by the given link element (G3)*
   * `gsn.t_G3_s_J4.source` --> *Returns the given link element's source node (J4)*
