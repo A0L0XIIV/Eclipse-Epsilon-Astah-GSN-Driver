@@ -9,6 +9,9 @@
  ******************************************************************************/
 package org.eclipse.epsilon.emc.astahgsn;
 
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
+
 public class GsnProperty {
 	
 	protected GsnPropertyType gsnPropertyType;
@@ -105,6 +108,63 @@ public class GsnProperty {
 		return p;
 	}
 	
+	public static GsnProperty parseElement(Element element) {
+		GsnProperty p = new GsnProperty();
+		
+		switch(element.getAttribute("xsi:type")) {
+		// NODE: Goal, assumption or justification
+		case "ARM:Claim":
+			p.isNode = true;
+			// Assumption has assumed="true" attribute
+			if(element.getAttribute("assummed") == "true") {
+				p.gsnPropertyType = GsnPropertyType.Assumption;
+			}
+			// Element is justification or goal
+			else if(p.isJustificationOrContext(element)) {
+				p.gsnPropertyType = GsnPropertyType.Justification;
+			}
+			else {
+				p.gsnPropertyType = GsnPropertyType.Goal;
+			}
+			break;
+		// NODE: Strategy
+		case "ARM:ArgumentReasoning":
+			p.gsnPropertyType = GsnPropertyType.Stratagy;
+			p.isNode = true;
+			break;
+		// NODE: Solution or context
+		case "ARM:InformationElement":
+			p.isNode = true;
+			if(p.isJustificationOrContext(element)) {
+				p.gsnPropertyType = GsnPropertyType.Context;
+			}
+			else {
+				p.gsnPropertyType = GsnPropertyType.Solution;
+			}
+			break;
+		// LINK: G-G, G-S, S-G
+		case "ARM:AssertedInference":
+			p.gsnPropertyType = GsnPropertyType.Inference;
+			p.isLink = true;
+			break;
+		// LINK: G-Sn
+		case "ARM:AssertedEvidence":
+			p.gsnPropertyType = GsnPropertyType.Evidence;
+			p.isLink = true;
+			break;
+		// LINK: G-C, G-A, G-J, S-C, S-A, S-J
+		case "ARM:AssertedContext":
+			p.gsnPropertyType = GsnPropertyType.AssertedContext;
+			p.isLink = true;
+			break;
+		default:
+			p = null;
+			break;
+		}
+		
+		return p;
+	}
+	
 	
 	public String getProperty() {
 		return property;
@@ -132,6 +192,40 @@ public class GsnProperty {
 	
 	public boolean isRoot() {
 		return isRoot;
+	}
+	
+	// Goal or Justification
+	public boolean isJustificationOrContext(Element element) {
+		/* Goal-Justification and Solution-Context pair nodes have the same attributes.
+		 * You cannot distinguish pairs by attributes. Only difference between these 
+		 * 2 pairs are their links. If element connected to AssertedContext link's target attribute 
+		 * (In this case source attribute because in XMI link elements' source-target attributes reversed)
+		 * that means the element is Justification or Context. 
+		 * Search AssertedContext link elements and if one of them has given element's xmi:id in 
+		 * the target (*Source: reversed) attribute then return true.
+		 * */
+		// Get element's xmi:id
+		String elementXmiId = element.getAttribute("xmi:id");
+		// Get element's parent node (root) and then its child nodes (all elements)
+		NodeList childNodes = element.getParentNode().getChildNodes();
+		
+		// Loop over root's child tags
+		for (int i=0; i<childNodes.getLength(); i++) {
+			// Get root's child
+			Object childNode = childNodes.item(i);
+			// Find the given attributeName in all nodes with loop because NodeList doesn't have find function
+			if (childNode instanceof Element) {
+				// If childNode is an instance of the Element class, cast it to the Element because Node class doesn't have getAttribute function
+				Element e = (Element) childNode;
+				// If e is a AssertedContext element and its source attribute has element's xmi:id
+				if(e.getAttribute("xsi:type").equals("ARM:AssertedContext")
+					&& e.getAttribute("source").equalsIgnoreCase(elementXmiId)) {
+					// Found element's xmi:id, it's justification, return true
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 	
 }
