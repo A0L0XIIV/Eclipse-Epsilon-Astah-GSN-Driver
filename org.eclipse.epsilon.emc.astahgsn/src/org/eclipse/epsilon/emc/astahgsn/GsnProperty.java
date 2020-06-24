@@ -22,6 +22,7 @@ public class GsnProperty {
 	protected boolean isLink = false;
 	protected boolean isRoot = false;
 	
+	// Parse given string: ID or type and find its GSN type
 	public static GsnProperty parse(String property) {
 		GsnProperty p = new GsnProperty();
 
@@ -108,28 +109,36 @@ public class GsnProperty {
 		return p;
 	}
 	
+	// Parse given element and find its GSN type
 	public static GsnProperty parseElement(Element element) {
 		GsnProperty p = new GsnProperty();
 		
-		switch(element.getAttribute("xsi:type")) {
+		// Assign xsiType to p object
+		p.xsiType = element.getAttribute("xsi:type");
+		
+		switch(p.xsiType) {
 		// NODE: Goal, assumption or justification
 		case "ARM:Claim":
 			p.isNode = true;
 			// Assumption has assumed="true" attribute
 			if(element.getAttribute("assummed") == "true") {
 				p.gsnPropertyType = GsnPropertyType.Assumption;
+				p.idPrefix = "A";
 			}
 			// Element is justification or goal
 			else if(p.isJustificationOrContext(element)) {
 				p.gsnPropertyType = GsnPropertyType.Justification;
+				p.idPrefix = "J";
 			}
 			else {
 				p.gsnPropertyType = GsnPropertyType.Goal;
+				p.idPrefix = "G";
 			}
 			break;
 		// NODE: Strategy
 		case "ARM:ArgumentReasoning":
 			p.gsnPropertyType = GsnPropertyType.Stratagy;
+			p.idPrefix = "S";
 			p.isNode = true;
 			break;
 		// NODE: Solution or context
@@ -137,24 +146,29 @@ public class GsnProperty {
 			p.isNode = true;
 			if(p.isJustificationOrContext(element)) {
 				p.gsnPropertyType = GsnPropertyType.Context;
+				p.idPrefix = "C";
 			}
 			else {
 				p.gsnPropertyType = GsnPropertyType.Solution;
+				p.idPrefix = "Sn";
 			}
 			break;
 		// LINK: G-G, G-S, S-G
 		case "ARM:AssertedInference":
 			p.gsnPropertyType = GsnPropertyType.Inference;
+			p.idPrefix = "";
 			p.isLink = true;
 			break;
 		// LINK: G-Sn
 		case "ARM:AssertedEvidence":
 			p.gsnPropertyType = GsnPropertyType.Evidence;
+			p.idPrefix = "";
 			p.isLink = true;
 			break;
 		// LINK: G-C, G-A, G-J, S-C, S-A, S-J
 		case "ARM:AssertedContext":
 			p.gsnPropertyType = GsnPropertyType.AssertedContext;
+			p.idPrefix = "";
 			p.isLink = true;
 			break;
 		default:
@@ -194,7 +208,7 @@ public class GsnProperty {
 		return isRoot;
 	}
 	
-	// Goal or Justification
+	// Goal or Justification  AND  Solution or Context  FINDER
 	public boolean isJustificationOrContext(Element element) {
 		/* Goal-Justification and Solution-Context pair nodes have the same attributes.
 		 * You cannot distinguish pairs by attributes. Only difference between these 
