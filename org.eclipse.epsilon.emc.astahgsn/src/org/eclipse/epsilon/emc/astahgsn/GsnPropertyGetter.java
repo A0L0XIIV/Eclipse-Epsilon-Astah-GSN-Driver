@@ -76,7 +76,8 @@ public class GsnPropertyGetter extends JavaPropertyGetter {
 				// ID isn't empty ==> node element, returns its type
 				if(elementId != "") {
 					// Get element's gsn property type
-					GsnProperty g = GsnProperty.parse(elementId);
+					//GsnProperty g = GsnProperty.parse(elementId);
+					GsnProperty g = GsnProperty.parseElement(element);
 					// Return it's type
 					if(g != null)
 						return g.getType().toString();
@@ -286,19 +287,22 @@ public class GsnPropertyGetter extends JavaPropertyGetter {
 			
 			GsnProperty gsnProperty = GsnProperty.parse(property);
 			
-			// Get element by id --> G1, Sn14, J4
-			// Or by type name --> goal, solution
+			// Get element by ID --> G1, Sn14, J4  OR
+			// Get element by type name --> goal, solution
 			if(gsnProperty != null) {
-				System.out.println("GSNPropertyGetter - invoke function - ID");
+				System.out.println("GSNPropertyGetter - invoke function - Type");
 				
 				// Call findElementByAttribute with element and use id attribute
-				return findElementByAttribute(element, "id", gsnProperty.getProperty());
+				return findElementByAttribute(element, "id", property);
 				
 			}
 
-			System.out.println("GSNPropertyGetter - invoke function - NONEOFTHEM");
-			// Not source, target, content or ID
-			return null;
+			System.out.println("GSNPropertyGetter - invoke function - LAST");
+			
+			// Get element by custom ID --> CA1, ECA, ...
+			// If property = Element ID doesn't exist, function returns null
+			// ID must consist of alphanumerical characters, eliminate other characters
+			return findElementByAttribute(element, "id", property.replaceAll("[^a-zA-Z0-9]", ""));
 			
 		}
 		else return super.invoke(object, property, context);
@@ -316,12 +320,12 @@ public class GsnPropertyGetter extends JavaPropertyGetter {
 			for (int i=0; i<childNodes.getLength(); i++) {
 				// Get root's child
 				Object childNode = childNodes.item(i);
-				// Find the given attributeNane in all nodes with loop because NodeList doesn't have find function
+				// Find the given attributeName in all nodes with loop because NodeList doesn't have find function
 				if (childNode instanceof Element) {
-					// If childNode is an instance of the Element class, cast it to the Element
+					// If childNode is an instance of the Element class, cast it to the Element because Node class doesn't have getAttribute function
 					Element e = (Element) childNode;
-					// Node class doesn't have getAttribute function thus casted it to Element
-					if(e.getAttribute(attributeName).equalsIgnoreCase(attributeValue)) {
+					// If attribute values match, add into the result list
+					if(e.getAttribute(attributeName).replaceAll("[^a-zA-Z0-9]", "").equalsIgnoreCase(attributeValue)) {
 						// Add all matches into result list
 						result.add(e);
 					}
@@ -353,8 +357,9 @@ public class GsnPropertyGetter extends JavaPropertyGetter {
 		else if(result.size() == 1)
 			return result.get(0);
 		// Return as a list
-		else
+		else 
 			return result;
+		
 	}
 	
 	
