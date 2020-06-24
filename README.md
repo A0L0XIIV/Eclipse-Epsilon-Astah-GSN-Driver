@@ -50,7 +50,8 @@ Eclipse Epsilon Astah GSN Driver with EMC-XMI integration
 * Both last and first methods are right and returns same results:
   * `gsn.goal.last.content.println();` --> *Returns last goal element's content*
   * `gsn.goal.content.last.println();` --> *Returns goal content sequence's (list) last content*
-* `PRINTING: gsn.C5.content.println():`
+* `PRINTING: gsn.C5.content.println();`
+* `NOTE:` *If element ID has non-alpha-numerical characters such as -+, don't use these characters in the query. Only use letters and digits in the ID. For example: for ID E-CA1 --> use gsn.ECA1*
 
 ### Setter Examples
 
