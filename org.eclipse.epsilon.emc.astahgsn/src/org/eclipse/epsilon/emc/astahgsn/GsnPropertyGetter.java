@@ -71,31 +71,14 @@ public class GsnPropertyGetter extends JavaPropertyGetter {
 			// Get element's type: goal, solution, evidence, ...
 			if ("gsntype".equals(property)) {
 				System.out.println("GSNPropertyGetter - invoke function - type");
-				// Get element's id
-				String elementId = element.getAttribute("id");
-				// ID isn't empty ==> node element, returns its type
-				if(elementId != "") {
+				
 					// Get element's gsn property type
-					//GsnProperty g = GsnProperty.parse(elementId);
 					GsnProperty g = GsnProperty.parseElement(element);
 					// Return it's type
 					if(g != null)
 						return g.getType().toString();
 					else
 						return null;
-				}
-				// ID is empty ==> link element, find type by xsi:type
-				else{
-					// Get link's xsi:type, split it from ':' and get second part
-					String elementXsiType = element.getAttribute("xsi:type").split(":")[1];
-					// Get element's gsn property type
-					GsnProperty g = GsnProperty.parse(elementXsiType);
-					// Return it's type
-					if(g != null)
-						return g.getType().toString();
-					else
-						return null;
-				}
 			}
 			
 			// Get link's target element
@@ -301,7 +284,7 @@ public class GsnPropertyGetter extends JavaPropertyGetter {
 			
 			// Get element by custom ID --> CA1, ECA, ...
 			// If property = Element ID doesn't exist, function returns null
-			// ID must consist of alphanumerical characters, eliminate other characters
+			// ID must consist of alpha-numerical characters, eliminate other characters
 			return findElementByAttribute(element, "id", property.replaceAll("[^a-zA-Z0-9]", ""));
 			
 		}
@@ -357,9 +340,8 @@ public class GsnPropertyGetter extends JavaPropertyGetter {
 		else if(result.size() == 1)
 			return result.get(0);
 		// Return as a list
-		else 
-			return result;
-		
+		else
+			return result;	
 	}
 	
 	
