@@ -3,7 +3,6 @@ package org.eclipse.epsilon.emc.astahgsn;
 import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
 import org.eclipse.epsilon.eol.execute.context.IEolContext;
 import org.eclipse.epsilon.eol.execute.introspection.java.JavaPropertySetter;
-import org.eclipse.epsilon.eol.types.EolSequence;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -110,11 +109,11 @@ public class GsnPropertySetter extends JavaPropertySetter {
 			if("append".equals(property) && value instanceof Element && ((Element) target).hasChildNodes()) {
 				Element newElement = (Element) value;
 				String newElementId = newElement.getAttribute("id");
+				// Parse id to find element's type
+				GsnProperty g = GsnProperty.parse(newElementId);
 				
 				// Check new element's id attribute. If it doesn't have any digit, assign a new id number
-				if(newElementId != "" && !hasDigit(newElementId)) {
-					// Parse id to find element's type
-					GsnProperty g = GsnProperty.parse(newElementId);
+				if(g != null && !hasDigit(newElementId)) {
 					// Get element's type highest id number and +1 it
 					int newIdNumber = getTypesHighestIdNumber(g.getType().toString(), (Element) target) + 1;
 					// Assign new id to the newElement
@@ -144,18 +143,19 @@ public class GsnPropertySetter extends JavaPropertySetter {
 			
 			for (int i=0; i<childNodes.getLength(); i++) {
 				// Get root's children
-				Object obj = childNodes.item(i);
+				Object childNode = childNodes.item(i);
 				// Object is the instance of the Element
-				if (obj instanceof Element) {
-					Element element = (Element) obj;
+				if (childNode instanceof Element) {
+					Element childElement = (Element) childNode;
+					String elementId = childElement.getAttribute("id");
 					// Check id's prefix and get its number value
-					if(element.hasAttribute("id") && !element.getAttribute("id").equals("")) {
+					if(childElement.hasAttribute("id") && !elementId.equals("")) {
 						// Parse element's id attribute
-						GsnProperty gElement = GsnProperty.parse(element.getAttribute("id"));
+						GsnProperty gElement = GsnProperty.parse(elementId);
 						// If parsed 'type' and parsed 'element id attribute' are the same
 						if(gElement.getType() == g.getType() ) {
 							// Get element's id attribute's number, remove non-digit characters and parse it to int
-							currentId = Integer.parseInt(element.getAttribute("id").replaceAll("[^\\d.]", ""));
+							currentId = Integer.parseInt(elementId.replaceAll("[^\\d.]", ""));
 							if(currentId > maxId)
 								maxId = currentId;
 						}
