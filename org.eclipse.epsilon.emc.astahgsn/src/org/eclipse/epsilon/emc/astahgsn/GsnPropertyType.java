@@ -19,8 +19,8 @@ public enum GsnPropertyType {
 	Assumption,
 	Justification,
 	// Links
-	Inference,
-	Evidence,
+	AssertedInference,
+	AssertedEvidence,
 	AssertedContext
 	
 }

@@ -79,14 +79,14 @@ public class GsnProperty {
 		// Links
 		case "inference":
 		case "assertedinference":
-			p.gsnPropertyType = GsnPropertyType.Inference;
+			p.gsnPropertyType = GsnPropertyType.AssertedInference;
 			p.idPrefix = "";
 			p.xsiType = "ARM:AssertedInference";
 			p.isLink = true;
 			break;
 		case "evidence":
 		case "assertedevidence":
-			p.gsnPropertyType = GsnPropertyType.Evidence;
+			p.gsnPropertyType = GsnPropertyType.AssertedEvidence;
 			p.idPrefix = "";
 			p.xsiType = "ARM:AssertedEvidence";
 			p.isLink = true;
@@ -121,7 +121,7 @@ public class GsnProperty {
 		case "ARM:Claim":
 			p.isNode = true;
 			// Assumption has assumed="true" attribute
-			if(element.getAttribute("assummed") == "true") {
+			if(element.getAttribute("assumed").equalsIgnoreCase("true")) {
 				p.gsnPropertyType = GsnPropertyType.Assumption;
 				p.idPrefix = "A";
 			}
@@ -155,13 +155,13 @@ public class GsnProperty {
 			break;
 		// LINK: G-G, G-S, S-G
 		case "ARM:AssertedInference":
-			p.gsnPropertyType = GsnPropertyType.Inference;
+			p.gsnPropertyType = GsnPropertyType.AssertedInference;
 			p.idPrefix = "";
 			p.isLink = true;
 			break;
 		// LINK: G-Sn
 		case "ARM:AssertedEvidence":
-			p.gsnPropertyType = GsnPropertyType.Evidence;
+			p.gsnPropertyType = GsnPropertyType.AssertedEvidence;
 			p.idPrefix = "";
 			p.isLink = true;
 			break;
