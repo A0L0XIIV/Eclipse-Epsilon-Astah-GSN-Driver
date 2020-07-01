@@ -30,8 +30,10 @@ public class GsnPropertyGetter extends JavaPropertyGetter {
 			&& ((EolModelElementType) object).getTypeName().equalsIgnoreCase("gsn")) synchronized (model) {
 				
 			
-			// gsn.ID, gsn.goal or some other accesses, object is EolModelElementType not Element nor [argumentElement]
-			// In order to cast object to Element, get models first element which is root element
+			/* Element and List Element getters (gsn.all, gsn.links, gsn.t_g1_s_a2, gsn.J4, ...)
+			* object parameter type is EolModelElementType, it isn't Element nor [argumentElement]
+			* In order to cast object to Element, get models first element which is root element
+			* */
 			if(object instanceof EolModelElementType
 				&& !((EolModelElementType) object).getAll().isEmpty()) {
 				System.out.println("GSNPropertyGetter - invoke function - GSN ID");
