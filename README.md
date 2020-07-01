@@ -30,6 +30,8 @@ Eclipse Epsilon Astah GSN Driver with EMC-XMI integration
 * All elements: `gsn.all` --> *For accessing all GSN elements*
 * Specific type: `gsn.goal` --> *Returns all goal elements*
 * Element by ID: `gsn.G1` --> *Returns G1 goal element*
+  * *gsn.goal.G1.content is not correct access, use gsn.G1*
+  * *If the custom ID has characters other than numbers or letters, remove special characters to access the element by ID. For instance, ID: R-CA1 --> use `gsn.RCA1`*
 * Element content: `gsn.G1.content` --> *Returns G1's content*
 * Element type: `gsn.G1.gsntype` --> *Returns G1's type (Goal)*
 * Element xmi:id : `gsn.G1.xmiid` OR `gsn.G1.xmi_id` --> *Returns G1's xmi:id attribute. It's unique for every element*
