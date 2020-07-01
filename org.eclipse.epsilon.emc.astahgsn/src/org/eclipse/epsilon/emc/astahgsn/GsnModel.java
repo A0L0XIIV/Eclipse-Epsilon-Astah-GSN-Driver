@@ -259,27 +259,22 @@ public class GsnModel extends CachedModel<Element> {
 			Node parent = e.getParentNode();
 			
 			if (parent == null) {
-				System.out.println("GSNModel - owns function - IF");
 				return createdElements.contains(instance);
 			}
 			else {
 				while (parent.getParentNode() != null) {
 					parent = parent.getParentNode();
 				}
-				System.out.println("GSNModel - owns function - ELSE");
 				return parent == document || createdElements.contains(parent);
 			}
 		}
 		// Initial model check, e.g. gsn.all, gsn.G1, ...
+		// This invokes the GsnPropertyGetter and GsnPropertySetter instead of JavaPropertyGetter/Setter
 		else if(instance instanceof EolModelElementType
 				&& ((EolModelElementType) instance).getTypeName().equalsIgnoreCase("gsn")){
 			return true;
 		}
-		// For queries that return ArrayList, e.g. gsn.goal
-		else if(instance instanceof ArrayList
-				&& ((ArrayList<?>) instance).get(0) instanceof Element) {
-			return true;
-		}
+
 		else {
 			return false;
 		}
