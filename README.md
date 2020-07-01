@@ -25,40 +25,48 @@ Eclipse Epsilon Astah GSN Driver with EMC-XMI integration
 
 ## EOL Examples (Epsilon Object Language)
 
-### Getter Examples
+### Element Access (Get) Examples
 
-* All elements: `gsn.all` --> *For accessing all GSN elements*
-* Specific type: `gsn.goal` --> *Returns all goal elements*
-* Element by ID: `gsn.G1` --> *Returns G1 goal element*
-  * *gsn.goal.G1.content is not correct access, use gsn.G1.content*
-  * *If the custom ID has characters other than numbers or letters, remove special characters to access the element by ID. For instance, ID: R-CA1 --> use `gsn.RCA1`*
+#### Accessing Element Attributes
+
 * Element content: `gsn.G1.content` --> *Returns G1's content*
 * Element type: `gsn.G1.gsntype` --> *Returns G1's type (Goal)*
+* Element ID: `gsn.G1.id` --> *Returns G1's id (G1)*
 * Element xmi:id : `gsn.G1.xmiid` OR `gsn.G1.xmi_id` --> *Returns G1's xmi:id attribute. It's unique for every element*
 * Element xsi:type: `gsn.G1.xsitype` OR `gsn.g1.xsi_type` --> *Returns G1's xsi:type attribute (ARM:Claim)*
-* Element ID: `gsn.G1.id` --> *Returns G1's id (G1)*
-* All links: `gsn.links` --> *Returns all link elements*
-* All nodes: `gsn.nodes` --> *Returns all node elements*
-* Get specific link element: 
-  * `gsn.t_C3_s_G4` --> *Returns link element with target: C3 and source: G4*
-  * `gsn.s_G5_t_Sn1` --> *Returns link element with source: G5 and target: Sn1*
 * Target/Source for link elements:
   * `gsn.t_C3_s_G4.target` --> *Returns the node element targeted by the given link element (C3)*
   * `gsn.t_c3_s_g4.source` --> *Returns the given link element's source node (G4)*
 * Target/Source for node elements:
   * `gsn.G1.target` --> *Returns all link elements ending in G1*
   * `gsn.G1.source` --> *Returns all link elements starting from G1*
+
+#### Accessing More Than One Elements (List)
+
+* All elements: `gsn.all` --> *For accessing all GSN elements*
+* Specific type: `gsn.goal`, `gsn.assumption`, `gsn.assertedevidence` --> *Returns all Goal, Assumption or Asserted Evidence elements*
+* All links: `gsn.links` --> *Returns all Link elements*
+* All nodes: `gsn.nodes` --> *Returns all Node elements*
+
+#### Accessing One Element
+
+* Element by ID: `gsn.G1` --> *Returns G1 goal element*
+  * *gsn.goal.G1.content is not correct access, use gsn.G1.content*
+  * *If the custom ID has characters other than numbers or letters (non-alpha-numerical), remove special characters to access the element by ID. For instance, ID: R-CA1 --> use `gsn.RCA1`*
+* Get specific link element: 
+  * `gsn.t_C3_s_G4` --> *Returns link element with target: C3 and source: G4*
+  * `gsn.s_G5_t_Sn1` --> *Returns link element with source: G5 and target: Sn1*
 * Get first or last element: `gsn.all.last, gsn.solution.first` --> Returns last element of the GSN and the second one returns first goal element
 * Both last and first methods are right and returns same results:
   * `gsn.goal.last.content.println();` --> *Returns last goal element's content*
   * `gsn.goal.content.last.println();` --> *Returns goal content sequence's (list) last content*
-* `PRINTING: gsn.C5.content.println();`
-* `NOTE:` *If element ID has non-alpha-numerical characters such as -+, don't use these characters in the query. Only use letters and digits in the ID. For example: for ID E-CA1 --> use gsn.ECA1*
 
-### Setter Examples
+* `PRINTING: gsn.C5.content.println();`
+
+### Element Update (Set) Examples
 
 * Set element (node) content: `gsn.Sn5.content = "Example";`
-* Set element id: `gsn.Sn5.id = "Sn14";` --> *MUST BE UNIQUE*
+* Set element ID: `gsn.Sn5.id = "Sn14";` --> *MUST BE UNIQUE*
 * Set element xmi:id : `gsn.Sn5.xmiid = "_fvLpH5q4Eeqyz11T9RpXrQ";` --> *MUST BE UNIQUE*
 * Set element xsi:type: `gsn.Sn5.xsitpye = "ARM:ArgumentReasoning";` --> *MUST MATCH THE ID TYPE (G3 = ARM:Claim)*
 * Set link element's source: `gsn.t_A12_s_G7.source = gsn.Sn7;`
