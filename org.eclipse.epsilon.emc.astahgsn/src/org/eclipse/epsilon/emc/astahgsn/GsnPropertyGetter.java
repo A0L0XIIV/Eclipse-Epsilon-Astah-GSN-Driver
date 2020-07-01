@@ -141,7 +141,7 @@ public class GsnPropertyGetter extends JavaPropertyGetter {
 				return getElementAttribute(element, "xsi:type");
 			}
 			
-// ---------- LIST ELEMENT GETTERS ----------
+// ---------- LIST (MORE THAN ONE) ELEMENT GETTERS ----------
 			
 			// Get all elements (gsn.all)
 			if ("all".equals(property)) {
@@ -242,28 +242,7 @@ public class GsnPropertyGetter extends JavaPropertyGetter {
 		        	return null;
 		        }
 			}
-			
-			
-			// Get last element, useful for new elements
-			if("last".equalsIgnoreCase(property) && element.hasChildNodes()) {
-				Node lastChild = element.getLastChild();
-				// If the last child is NOT an Element instance, get the previous one
-				while(! (lastChild instanceof Element)) {
-					lastChild = lastChild.getPreviousSibling();
-				}
-				return lastChild;
-			}
-			
-			// Get first element
-			if("first".equalsIgnoreCase(property) && element.hasChildNodes()) {
-				Node firstChild = element.getFirstChild();
-				// If the first child is NOT an Element instance, get the next one
-				while(! (firstChild instanceof Element)) {
-					firstChild = firstChild.getNextSibling();
-				}
-				return firstChild;
-			}
-			
+					
 			
 			GsnProperty gsnProperty = GsnProperty.parse(property);
 			
