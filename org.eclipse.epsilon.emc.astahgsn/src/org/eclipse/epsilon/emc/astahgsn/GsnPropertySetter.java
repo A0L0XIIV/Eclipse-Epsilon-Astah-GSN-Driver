@@ -21,6 +21,7 @@ public class GsnPropertySetter extends JavaPropertySetter {
 		System.out.println("GSNPropertySetter - invoke function");
 		
 		if (target instanceof Element) synchronized (model) {
+			// Cast target object to element type
 			Element element = (Element) target;
 			
 				

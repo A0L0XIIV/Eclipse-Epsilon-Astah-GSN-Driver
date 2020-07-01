@@ -2,6 +2,8 @@ package org.eclipse.epsilon.emc.astahgsn;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import org.eclipse.epsilon.eol.exceptions.EolRuntimeException;
 import org.eclipse.epsilon.eol.execute.context.IEolContext;
@@ -25,26 +27,11 @@ public class GsnPropertyGetter extends JavaPropertyGetter {
 		if (object instanceof Element
 			|| object instanceof EolModelElementType
 			&& ((EolModelElementType) object).isInstantiable()
-			&& ((EolModelElementType) object).getTypeName().equalsIgnoreCase("gsn")
-			|| object instanceof ArrayList) synchronized (model) {
+			&& ((EolModelElementType) object).getTypeName().equalsIgnoreCase("gsn")) synchronized (model) {
 				
-			// Get all elements (gsn.all)
-			if ("all".equals(property)) {
-				System.out.println("GSNPropertyGetter - invoke function - ALL");
-				// Invoke JavaPropertyGetter, calls GsnModel's getAllOfTypeFromModel function and fills model
-				if(((EolModelElementType) object).getAll().isEmpty()) {
-					super.invoke(object, property, context);
-					return null;
-				}
-				// Return root tag. It includes all argumentElement tags as well
-				else {
-					// Object has both root tag and its children. Get the first element which is root tag
-					return ((EolModelElementType) object).getAll().toArray()[0];
-				}
-			}
 			
-			// gsn.ID access, object is EolModelElementType not Element nor [argumentElement]
-			// In order to cast object to Element, get models first element
+			// gsn.ID, gsn.goal or some other accesses, object is EolModelElementType not Element nor [argumentElement]
+			// In order to cast object to Element, get models first element which is root element
 			if(object instanceof EolModelElementType
 				&& !((EolModelElementType) object).getAll().isEmpty()) {
 				System.out.println("GSNPropertyGetter - invoke function - GSN ID");
@@ -52,33 +39,32 @@ public class GsnPropertyGetter extends JavaPropertyGetter {
 				object = ((EolModelElementType) object).getAll().toArray()[0];
 			}
 			
-			// gsn.goal.last or gsn.solution.first return ArrayList because, they are subset of the Root Element 
-			// However gsn.all.last doesn't return ArrayList, it returns Root Tag element
-			if(object instanceof ArrayList
-				&& ((ArrayList<?>) object).get(0) instanceof Element) {
-				ArrayList<Element> list = (ArrayList<Element>) object;
-				if("last".equals(property)) {
-					return list.get(list.size() - 1);
-				}
-				else if("first".equals(property)) {
-					return list.get(0);
-				}
-			}
-				
+			// Cast object to element type
 			Element element = (Element) object;
 			
-						
+// ---------- ELEMENT ATTRIBUTE GETTERS ----------
+			
+			// Get node's content
+			if("content".equalsIgnoreCase(property)) {
+				return getElementAttribute(element, "content");
+			}
+			
+			// Get element's id
+			if("id".equalsIgnoreCase(property)) {
+				return getElementAttribute(element, "id");
+			}
+			
 			// Get element's type: goal, solution, evidence, ...
 			if ("gsntype".equals(property)) {
 				System.out.println("GSNPropertyGetter - invoke function - type");
 				
-					// Get element's gsn property type
-					GsnProperty g = GsnProperty.parseElement(element);
-					// Return it's type
-					if(g != null)
-						return g.getType().toString();
-					else
-						return null;
+				// Get element's gsn property type
+				GsnProperty g = GsnProperty.parseElement(element);
+				// Return it's type
+				if(g != null)
+					return g.getType().toString();
+				else
+					return null;
 			}
 			
 			// Get link's target element
@@ -86,7 +72,7 @@ public class GsnPropertyGetter extends JavaPropertyGetter {
 				System.out.println("GSNPropertyGetter - invoke function - target");
 				
 				// Element is node or link, if element has target attribute = it's a link
-				if(element.hasAttribute("target")) {
+				if(element.hasAttribute("source")) {
 					// Get link element's SOURCE* value and find the node element with xmi:id = targetId 
 					/* WARNING: Astah-GSN has reversed source/target attributes for link elements in XMI file.
 					* That means link's source attribute stores the targeted (the end of the arrow) node element's xmi:id
@@ -118,7 +104,7 @@ public class GsnPropertyGetter extends JavaPropertyGetter {
 				System.out.println("GSNPropertyGetter - invoke function - source");
 				
 				// Element is node or link, if element has source attribute = it's a link
-				if(element.hasAttribute("source")) {	
+				if(element.hasAttribute("target")) {	
 					// Get element's TARGET* value and find the node element with xmi:id = sourceId
 					/* WARNING: Astah-GSN has reversed source/target attributes for link elements in XMI file.
 					* That means link's source attribute stores the targeted (the end of the arrow) node element's xmi:id
@@ -145,16 +131,6 @@ public class GsnPropertyGetter extends JavaPropertyGetter {
 				}
 			}
 			
-			// Get node's content
-			if("content".equalsIgnoreCase(property)) {
-				return getElementAttribute(element, "content");
-			}
-			
-			// Get element's id
-			if("id".equalsIgnoreCase(property)) {
-				return getElementAttribute(element, "id");
-			}
-			
 			// Get element's xmi:id
 			if("xmiid".equalsIgnoreCase(property) || "xmi_id".equalsIgnoreCase(property)) {
 				return getElementAttribute(element, "xmi:id");
@@ -164,6 +140,25 @@ public class GsnPropertyGetter extends JavaPropertyGetter {
 			if("xsitype".equalsIgnoreCase(property) || "xsi_type".equalsIgnoreCase(property)) {
 				return getElementAttribute(element, "xsi:type");
 			}
+			
+// ---------- LIST ELEMENT GETTERS ----------
+			
+			// Get all elements (gsn.all)
+			if ("all".equals(property)) {
+				System.out.println("GSNPropertyGetter - invoke function - ALL");
+				
+				// Element is the root tag, get it with getAll function and get first element (root) from the array
+				// Get children from the root
+				NodeList childNodes = element.getChildNodes();
+				// Children have 2 types: textInput and argumentElement, only get argumentElement ones and create a new list with them
+				List<Node> result = IntStream.range(0, childNodes.getLength())
+				        .mapToObj(childNodes::item)				// Get each element in the NodeList
+				        .filter(n -> (n instanceof Element))	// Only get Element type children (which are argumentElement)
+				        .collect(Collectors.toList());			// Collect them inside a list
+				// Return all GSN elements as a list, Epsilon will convert it to Sequence
+				return result;
+			}
+			
 			
 			// Get all link elements
 			if ("links".equalsIgnoreCase(property)) {
@@ -205,6 +200,8 @@ public class GsnPropertyGetter extends JavaPropertyGetter {
 					return null;
 				}
 			}
+			
+// ---------- ONE SPECIFIC ELEMENT GETTERS ----------
 			
 			// Get specific link element by target and source node IDs
 			if(property.startsWith("t_")) {
@@ -288,8 +285,10 @@ public class GsnPropertyGetter extends JavaPropertyGetter {
 			return findElementByAttribute(element, "id", property.replaceAll("[^a-zA-Z0-9]", ""));
 			
 		}
+		
 		else return super.invoke(object, property, context);
 	}
+	
 	
 	
 	public Object findElementByAttribute(Node node, String attributeName, String attributeValue) {
@@ -303,13 +302,24 @@ public class GsnPropertyGetter extends JavaPropertyGetter {
 			for (int i=0; i<childNodes.getLength(); i++) {
 				// Get root's child
 				Object childNode = childNodes.item(i);
+				
 				// Find the given attributeName in all nodes with loop because NodeList doesn't have find function
 				if (childNode instanceof Element) {
 					// If childNode is an instance of the Element class, cast it to the Element because Node class doesn't have getAttribute function
 					Element e = (Element) childNode;
+					
 					// If attribute values match, add into the result list
-					if(e.getAttribute(attributeName).replaceAll("[^a-zA-Z0-9]", "").equalsIgnoreCase(attributeValue)) {
+					if(e.getAttribute(attributeName).equalsIgnoreCase(attributeValue)) {
 						// Add all matches into result list
+						result.add(e);
+					}
+					/* Custom IDs might have punctuation characters such as - or _
+					 * However, Epsilon script doesn't allow some of them so users remove these characters while querying
+					 * For example, ID: R-CA1 --> Query: gsn.RCA1
+					 * Thus, after getting attribute value, it removes all characters except digits and letters before comparison
+					 * */
+					else if (attributeName.equalsIgnoreCase("id")
+							&& e.getAttribute(attributeName).replaceAll("[^a-zA-Z0-9]", "").equalsIgnoreCase(attributeValue)) {
 						result.add(e);
 					}
 					// For getting one type of elements, such as all goal elements. "goal" doesn't have any digits
