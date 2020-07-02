@@ -61,7 +61,7 @@ Eclipse Epsilon Astah GSN Driver with EMC-XMI integration
   * `gsn.goal.last.content.println();` --> *Returns last goal element's content*
   * `gsn.goal.content.last.println();` --> *Returns goal content sequence's (list) last content*
 
-* `PRINTING: gsn.C5.content.println();`
+* PRINTING in Epsilon: `gsn.C5.content.println();`
 
 ### Element Update (Set) Examples
 

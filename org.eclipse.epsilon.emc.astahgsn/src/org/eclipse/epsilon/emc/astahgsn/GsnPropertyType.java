@@ -13,7 +13,7 @@ public enum GsnPropertyType {
 	
 	// Nodes
 	Goal,
-	Stratagy,
+	Strategy,
 	Solution,
 	Context,
 	Assumption,

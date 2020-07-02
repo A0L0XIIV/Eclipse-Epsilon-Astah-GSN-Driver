@@ -43,7 +43,7 @@ public class GsnProperty {
 			break;
 		case "s":
 		case "stratagy":
-			p.gsnPropertyType = GsnPropertyType.Stratagy;
+			p.gsnPropertyType = GsnPropertyType.Strategy;
 			p.idPrefix = "S";
 			p.xsiType = "ARM:ArgumentReasoning";
 			p.isNode = true;
@@ -137,7 +137,7 @@ public class GsnProperty {
 			break;
 		// NODE: Strategy
 		case "ARM:ArgumentReasoning":
-			p.gsnPropertyType = GsnPropertyType.Stratagy;
+			p.gsnPropertyType = GsnPropertyType.Strategy;
 			p.idPrefix = "S";
 			p.isNode = true;
 			break;
