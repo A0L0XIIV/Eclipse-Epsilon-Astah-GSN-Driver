@@ -134,12 +134,12 @@ public class GsnPropertyGetter extends JavaPropertyGetter {
 			}
 			
 			// Get element's xmi:id
-			if("xmiid".equalsIgnoreCase(property) || "xmi_id".equalsIgnoreCase(property)) {
+			if("xmi_id".equalsIgnoreCase(property)) {
 				return getElementAttribute(element, "xmi:id");
 			}
 			
 			// Get element's xsi:type
-			if("xsitype".equalsIgnoreCase(property) || "xsi_type".equalsIgnoreCase(property)) {
+			if("xsi_type".equalsIgnoreCase(property)) {
 				return getElementAttribute(element, "xsi:type");
 			}
 			

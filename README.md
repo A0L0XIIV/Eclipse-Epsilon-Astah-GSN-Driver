@@ -32,8 +32,8 @@ Eclipse Epsilon Astah GSN Driver with EMC-XMI integration
 * Element content: `gsn.G1.content` --> *Returns G1's content*
 * Element type: `gsn.G1.gsntype` --> *Returns G1's type (Goal)*
 * Element ID: `gsn.G1.id` --> *Returns G1's id (G1)*
-* Element xmi:id : `gsn.G1.xmiid` OR `gsn.G1.xmi_id` --> *Returns G1's xmi:id attribute. It's unique for every element*
-* Element xsi:type: `gsn.G1.xsitype` OR `gsn.g1.xsi_type` --> *Returns G1's xsi:type attribute (ARM:Claim)*
+* Element xmi:id : `gsn.G1.xmi_id` --> *Returns G1's xmi:id attribute. It's unique for every element*
+* Element xsi:type: `gsn.g1.xsi_type` --> *Returns G1's xsi:type attribute (ARM:Claim)*
 * Target/Source for link elements:
   * `gsn.t_C3_s_G4.target` --> *Returns the node element targeted by the given link element (C3)*
   * `gsn.t_c3_s_g4.source` --> *Returns the given link element's source node (G4)*
@@ -67,8 +67,8 @@ Eclipse Epsilon Astah GSN Driver with EMC-XMI integration
 
 * Set element (node) content: `gsn.Sn5.content = "Example";`
 * Set element ID: `gsn.Sn5.id = "Sn14";` --> *MUST BE UNIQUE*
-* Set element xmi:id : `gsn.Sn5.xmiid = "_fvLpH5q4Eeqyz11T9RpXrQ";` --> *MUST BE UNIQUE*
-* Set element xsi:type: `gsn.Sn5.xsitpye = "ARM:ArgumentReasoning";` --> *MUST MATCH THE ID TYPE (G3 = ARM:Claim)*
+* Set element xmi:id : `gsn.Sn5.xmi_id = "_fvLpH5q4Eeqyz11T9RpXrQ";` --> *MUST BE UNIQUE*
+* Set element xsi:type: `gsn.Sn5.xsi_tpye = "ARM:ArgumentReasoning";` --> *MUST MATCH THE ID TYPE (G3 = ARM:Claim)*
 * Set link element's source: `gsn.t_A12_s_G7.source = gsn.Sn7;`
 * Set link element's target: `gsn.t_A12_s_G7.target = gsn.Sn7;`
 * Set element's (node) gsn type: `gsn.S9.gsntype = "goal";` --> *Changes element's type and assigns new id (last/highest)*

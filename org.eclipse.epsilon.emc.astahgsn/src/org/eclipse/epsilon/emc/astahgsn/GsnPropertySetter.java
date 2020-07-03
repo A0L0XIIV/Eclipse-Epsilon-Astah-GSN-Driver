@@ -42,7 +42,7 @@ public class GsnPropertySetter extends JavaPropertySetter {
 			}
 			
 			// Set element's xmi:id
-			if("xmiid".equalsIgnoreCase(property) || "xmi_id".equalsIgnoreCase(property)) {
+			if("xmi_id".equalsIgnoreCase(property)) {
 				System.out.println("GSNPropertySetter - invoke function - xmi:id");
 				
 				element.setAttribute("xmi:id", String.valueOf(value) + "");
@@ -50,7 +50,7 @@ public class GsnPropertySetter extends JavaPropertySetter {
 			}
 			
 			// Set element's xsi:type
-			if("xsitype".equalsIgnoreCase(property) || "xsi_type".equalsIgnoreCase(property)) {
+			if("xsi_type".equalsIgnoreCase(property)) {
 				System.out.println("GSNPropertySetter - invoke function - xsi:type");
 				
 				element.setAttribute("xsi:type", String.valueOf(value) + "");
