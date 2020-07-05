@@ -94,7 +94,7 @@ Eclipse Epsilon Astah GSN Driver with EMC-XMI integration
 context gsn {
 	constraint Example1 {
 		check: self.g1.target.size() == 2
-		message: "Goal " + self.g1.id + " must have exactly 2 outgoing targets!"
+		message: "Goal " + self.g1.id + " must have exactly 2 outgoing links!"
 	}
 }
 
