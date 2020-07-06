@@ -42,7 +42,7 @@ public class GsnProperty {
 			p.isNode = true;
 			break;
 		case "s":
-		case "stratagy":
+		case "strategy":
 			p.gsnPropertyType = GsnPropertyType.Strategy;
 			p.idPrefix = "S";
 			p.xsiType = "ARM:ArgumentReasoning";
@@ -77,15 +77,15 @@ public class GsnProperty {
 			p.isNode = true;
 			break;
 		// Links
-		case "inference":
 		case "assertedinference":
+		case "inference":
 			p.gsnPropertyType = GsnPropertyType.AssertedInference;
 			p.idPrefix = "";
 			p.xsiType = "ARM:AssertedInference";
 			p.isLink = true;
 			break;
-		case "evidence":
 		case "assertedevidence":
+		case "evidence":
 			p.gsnPropertyType = GsnPropertyType.AssertedEvidence;
 			p.idPrefix = "";
 			p.xsiType = "ARM:AssertedEvidence";
